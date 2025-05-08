@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->    
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{{ settings.meta_title_prefix }} {% block meta_title %}{% endblock %} {{ settings.meta_title_suffix }}</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="{{ settings.theme_bg|default('hsl(0, 0%, 97%)') }}">
+    <!-- Remember to come back and look at this when implementing light/dark mode later -->
+    <meta property="bb:url" content="{{ constant('SYSTEM_URL') }}">
+    <meta property="bb:client_area" content="{{ '/'|link }}">
+    <!-- bb:url and bb:client_area should be deprecated/renamed -->
+    <meta name="csrf-token" content="{{ CSRFToken }}">
+    <!-- Consider canonical link meta ??-->
+
+    <meta name="description" content="{% block meta_description %}{{ settings.meta_description }}{% endblock %}">
+    <meta name="keywords" content="{{ settings.meta_keywords }}">
+    <meta name="robots" content="{{ settings.meta_robots }}">
+    <meta name="author" content="{{ settings.meta_author }}">
+    <meta name="generator" content="FOSSBilling">
+    
+    <!-- No opengraph or other social media meta tags. Thinking about whether to add them or not -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
+    <!-- Yes, it's font awesome, yes I plan to replace it with locally hosted icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arimo&amp;family=Inter&amp;family=Montserrat&amp;display=swap" rel="stylesheet">
+    <!-- TODO - Use local fonts instead of calling from Google -->
+    
+    <link rel="shortcut icon" href="{{ guest.system_company.favicon_url }}">
+    <!-- TODO - Review current favicon best practices, multiple sizes for better device support, etc. -->
+    
+    {{ "Api/API.js" | library_url | script_tag }}
+
+    <link rel='stylesheet' type='text/css' href="{{ 'scss/unua.scss' | asset_url }}">
+    <script src="{{ 'unua.js' | asset_url }}"></script> <!--Defer maybe?-->
+    
+    {{ DebugBar_renderHead() }}
+
+    {% block head %}{% endblock %}
+    {% block js %}{% endblock %}
+
+
+ 
+<style>
+:root {
+    --bg: {{ settings.theme_bg|default('hsl(0, 0%, 97%)') }};
+    --bg-light: {{ settings.theme_bg_light|default('hsl(0, 0%, 100%)') }};
+    --bg-dark: {{ settings.theme_bg_dark|default('hsl(0, 0%, 82%)') }};
+
+    --text: {{ settings.theme_text|default('hsl(0, 0%, 20%)') }};
+    --text-muted: {{ settings.theme_text_muted|default('hsl(0, 0%, 40%)') }};
+
+    --accent: {{ settings.theme_accent|default('hsl(340, 80%, 50%)') }};
+    --accent-light: {{ settings.theme_accent_light|default('hsl(340, 80%, 65%)') }};
+    --accent-dark: {{ settings.theme_accent_dark|default('hsl(340, 80%, 35%)') }};
+
+    --highlight: {{ settings.theme_highlight|default('hsl(50, 90%, 50%)') }};
+    --highlight-light: {{ settings.theme_highlight_light|default('hsl(50, 90%, 65%)') }};
+    --highlight-dark: {{ settings.theme_highlight_dark|default('hsl(50, 90%, 35%)') }};
+
+    --font: {{ settings.font }}, sans-serif !important;
+}
+</style>    
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+{% block body %}
+{% if not client and settings.require_login %}
+    <script>
+        $(function () {
+            bb.redirect('{{ "login"|link }}');
+        });
+    </script>
+{% endif %}
+
+{% if client %}
+    {% set profile = client.profile_get %}
+{% endif %}
+
+{% set company = guest.system_company %}
+
+    {% set logo_url =  company.logo_url %}
+
+
+
+
+    {% include 'partial_header.html.twig' %}
+
+    {% include 'partial_menu.html.twig' %}
+
+    <div class="gradient-divider" role="separator" aria-hidden="true"></div>
+
+    <main>
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+
+
+
+    {% if settings.footer_enabled %}
+        {% include 'partial_footer.html.twig' %}
+    {% endif %}
+
+
+    {{ DebugBar_render() }}
+</body>
+    </html>
