@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->    
+<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +20,7 @@
     <meta name="robots" content="{{ settings.meta_robots }}">
     <meta name="author" content="{{ settings.meta_author }}">
     <meta name="generator" content="FOSSBilling">
-    
+
     <!-- No opengraph or other social media meta tags. Thinking about whether to add them or not -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
@@ -29,22 +29,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arimo&amp;family=Inter&amp;family=Montserrat&amp;display=swap" rel="stylesheet">
     <!-- TODO - Use local fonts instead of calling from Google -->
-    
+
     <link rel="shortcut icon" href="{{ guest.system_company.favicon_url }}">
     <!-- TODO - Review current favicon best practices, multiple sizes for better device support, etc. -->
-    
+
     {{ "Api/API.js" | library_url | script_tag }}
 
     <link rel='stylesheet' type='text/css' href="{{ 'scss/unua.scss' | asset_url }}">
     <script src="{{ 'unua.js' | asset_url }}"></script> <!--Defer maybe?-->
-    
+
     {{ DebugBar_renderHead() }}
 
     {% block head %}{% endblock %}
     {% block js %}{% endblock %}
 
 
- 
+
 <style>
 :root {
     --bg: {{ settings.theme_bg|default('hsl(0, 0%, 97%)') }};
@@ -64,10 +64,12 @@
 
     --font: {{ settings.font }}, sans-serif !important;
 }
-</style>    
+</style>
 </head>
 
-<body class="{% block body_class %}{% endblock %}">
+<body id="top" class="{% block body_class %}{% endblock %}">
+
+<!-- TODO - Keyboard nav skip links -->
 
 {% block body %}
 {% if not client and settings.require_login %}
@@ -83,8 +85,7 @@
 {% endif %}
 
 {% set company = guest.system_company %}
-
-    {% set logo_url =  company.logo_url %}
+{% set logo_url =  company.logo_url %}
 
 
 
@@ -95,8 +96,25 @@
 
     <div class="gradient-divider" role="separator" aria-hidden="true"></div>
 
-    <main>
+    <main id="main-content" role="main">
         <div class="container">
+
+            {% if settings.show_breadcrumb %}
+
+                {% block breadcrumbs %}
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb d-none d-md-flex">
+                            <li class="breadcrumb-item"><a href="{{ '/'|link }}">{{ 'Home'|trans }}</a>
+                            </li>
+                            {% block breadcrumb %}
+                            <li class="active breadcrumb-item">{{ 'Dashboard'|trans }}</li>
+                            {% endblock %}
+                        </ol>
+                    </nav>
+                {% endblock %}
+            {% endif %}
+
+
             {% block content %}{% endblock %}
         </div>
     </main>
@@ -109,6 +127,23 @@
     {% endif %}
 
 
+    {% if settings.footer_to_top_enabled %}
+        <a href="#top" class="btn btn-primary btn-top">{{ 'Top'|trans }}</a>
+    {% endif %}
+
+    {% if guest.extension_is_on({ "mod": "cookieconsent" }) %}
+        {% include 'mod_cookieconsent_index.html.twig' ignore missing %}
+    {% endif %}
+
     {{ DebugBar_render() }}
+
+    <!-- Yes, yes, scripts should be in unua.js. They will be moved in near future when this is tidied up -->
+    <script>
+  document.addEventListener('scroll', function () {
+    document.body.classList.toggle('scrolled', window.scrollY > 300);
+  });
+</script>
+
+
 </body>
     </html>

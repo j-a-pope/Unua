@@ -1,0 +1,350 @@
+{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
+
+{% block meta_title %}{{ 'Client Area'|trans }}{% endblock %}
+{% block page_header %}{{ 'Dashboard'|trans }}{% endblock %}
+
+{% block body_class %}dashboard{% endblock %}
+{% block breadcrumbs %}
+{% if not settings.hide_dashboard_breadcrumb %}
+<ul class="breadcrumb">
+<li><a href="{{ '/'|link }}">{{ 'Home'|trans }}</a> <span class="dropdown-divider">/</span></li>
+<li class="active">{{ 'Dashboard'|trans }}</li>
+</ul>
+{% endif %}
+{% endblock %}
+
+{% import "macro_functions.html.twig" as mf %}
+
+{% block content %}
+{% if settings.showcase_enabled %}
+<div class="alert alert-info" role="alert">
+
+<p>{{ settings.showcase_text |markdown }}</p>
+
+{% if (settings.showcase_button_url) and (settings.showcase_button_title) %}
+<a class="btn btn-primary"
+href="{{ settings.showcase_button_url }}">{{ settings.showcase_button_title }}</a>
+{% endif %}
+</div>
+{% endif %}
+
+{% if client %}
+{% set tickets = client.support_ticket_get_list({ "status": 'on_hold' }) %}
+{% if tickets.total > 0 %}
+<div>
+<div>
+{% for i, ticket in tickets.list %}
+<div class="alert alert-info d-flex justify-content-between" role="alert">
+<span>Ticket <strong>#{{ ticket.id }}</strong> was responded {{ ticket.updated_at|timeago }} {{ 'ago'|trans }}.</span><a
+href="{{ 'support/ticket'|link }}/{{ ticket.id }}"
+class="alert-link">{{ 'Reply'|trans }}</a>
+</div>
+{% endfor %}
+</div>
+</div>
+{% endif %}
+
+
+<div class="dashboard-grid">
+
+<div class="card">
+<div class="card-header">
+<h2 class="card-title">{{ 'Services'|trans }}</h2>
+<div>
+<a class="btn btn-sm btn-primary order-button"
+href="{{ 'order'|link }}">{{ 'New order'|trans }}</a>
+<a class="btn btn-sm btn-dark"
+href="{{ 'order/service'|link }}">{{ 'All services'|trans }}</a>
+</div>
+</div>
+<div class="card-body">
+<dl class="info-grid">
+<dt>{{ 'Total'|trans }}</dt>
+<dd>{{ client.order_get_list({ "hide_addons": 1 }).total }}</dd>
+
+<dt>{{ 'Active'|trans }}</dt>
+<dd>{{ client.order_get_list({ "hide_addons": 1, "status": "active" }).total }}</dd>
+
+{% set expiring_total = client.order_get_list({ "expiring": 1 }).total %}
+<dt class="{{ expiring_total > 0 ? 'warn' : '' }}">{{ 'Expiring'|trans }}</dt>
+<dd class="{{ expiring_total > 0 ? 'warn' : '' }}">{{ expiring_total }}</dd>
+</dl>
+
+
+<hr>
+
+<h3 class="section-subtitle">{{ 'Recent orders'|trans }}</h3>
+
+{% set recent_orders = client.order_get_list({ "per_page": 5, "page": request.page, "hide_addons": 1 }).list %}
+{% if recent_orders %}
+<ul class="item-list">
+{% for order in recent_orders %}
+<li class="item">
+<a href="{{ 'order/service/manage'|link }}/{{ order.id }}" class="item-link">
+<div class="item-info">
+<div class="item-title">{{ order.title|truncate(45) }}</div>
+<div class="item-meta">
+<span class="item-id">#{{ order.id }}</span>
+<span class="item-separator">·</span>
+<span class="item-updated" title="{{ order.updated_at|format_date }}">
+{{ order.updated_at|timeago }} {{ 'ago'|trans }}
+</span>
+</div>
+</div>
+<div class="item-status">
+{% set status_class = {
+    'active': 'badge-success',
+    'pending_setup': 'badge-warning',
+    'failed_setup': 'badge-danger',
+    'suspended': 'badge-danger',
+    'failed_renew': 'badge-danger',
+    'canceled': 'badge-secondary'
+}[order.status] ?? 'badge-default' %}
+<span class="badge {{ status_class }}">{{ mf.status_name(order.status) }}</span>
+</div>
+</a>
+</li>
+{% endfor %}
+</ul>
+{% else %}
+<div class="item-empty">
+<span>{{ 'No recent orders'|trans }}</span>
+</div>
+{% endif %}
+
+
+</div>
+</div>
+
+
+
+<div class="card">
+<div class="card-header">
+<h2 class="card-title">{{ 'Invoices'|trans }}</h2>
+<div>
+<a class="btn btn-sm btn-dark"
+href="{{ 'invoice'|link }}">{{ 'All Invoices'|trans }}</a>
+</div>
+</div>
+<div class="card-body">
+<dl class="info-grid">
+<dt>{{ 'Total'|trans }}</dt>
+<dd>{{ client.invoice_get_list().total }}</dd>
+
+<dt>{{ 'Paid'|trans }}</dt>
+<dd>{{ client.invoice_get_list({ "status": "paid" }).total }}</dd>
+
+{% set unpaid_total = client.invoice_get_list({ "status": "unpaid" }).total %}
+<dt class="{{ unpaid_total > 0 ? 'warn' : '' }}">{{ 'Unpaid'|trans }}</dt>
+<dd class="{{ unpaid_total > 0 ? 'warn' : '' }}">{{ unpaid_total }}</dd>
+</dl>
+
+<hr>
+
+<h3 class="section-subtitle">{{ 'Recent invoices'|trans }}</h3>
+
+{% set recent_invoices = client.invoice_get_list({ "per_page": 5 }).list %}
+{% if recent_invoices %}
+<ul class="item-list">
+{% for invoice in recent_invoices %}
+<li class="item">
+<a href="{{ 'invoice'|link }}/{{ invoice.hash }}" class="item-link">
+<div class="item-info">
+<div class="item-title-row">
+<span class="item-title">{{ invoice.title|default('Invoice') }}</span>
+<span class="item-amount">{{ invoice.total | money(invoice.currency) }}</span>
+</div>
+<div class="item-meta">
+<span class="item-id">#{{ invoice.id }}</span>
+<span class="item-separator">·</span>
+<span class="item-updated" title="{{ invoice.updated_at|format_date }}">
+{{ invoice.updated_at|timeago }} {{ 'ago'|trans }}
+</span>
+{% if invoice.status == 'unpaid' %}
+<span class="item-separator">·</span>
+<span class="item-pay-link">{{ 'Pay now'|trans }}</span>
+{% endif %}
+</div>
+</div>
+<div class="item-status">
+{% set status_class = {
+    'paid': 'badge-success',
+    'unpaid': 'badge-warning',
+    'refunded': 'badge-secondary',
+    'canceled': 'badge-secondary'
+}[invoice.status] ?? 'badge-default' %}
+<span class="badge {{ status_class }}">{{ mf.status_name(invoice.status) }}</span>
+</div>
+</a>
+</li>
+
+{% endfor %}
+</ul>
+
+{% else %}
+<div class="item-empty">
+<span>{{ 'No recent invoices'|trans }}</span>
+</div>
+{% endif %}
+
+</div>
+</div>
+
+
+
+<div class="card">
+<div class="card-header">
+<h2 class="card-title">{{ 'Tickets'|trans }}</h2>
+<div>
+<a class="btn btn-sm btn-primary"
+href="{{ 'support'|link({ 'ticket': 1 }) }}">{{ 'New ticket'|trans }}</a>
+<a class="btn btn-sm btn-dark" href="{{ 'support'|link }}">{{ 'All tickets'|trans }}</a>
+</div>
+</div>
+<div class="card-body">
+<dl class="info-grid">
+<dt>{{ 'Total'|trans }}</dt>
+<dd>{{ client.support_ticket_get_list().total }}</dd>
+
+<dt>{{ 'Open'|trans }}</dt>
+<dd>{{ client.support_ticket_get_list({ "status": 'open' }).total }}</dd>
+
+<dt>{{ 'On Hold'|trans }}</dt>
+<dd>{{ client.support_ticket_get_list({ "status": 'on_hold' }).total }}</dd>
+</dl>
+
+<hr>
+
+<h3 class="section-subtitle">{{ 'Recent tickets'|trans }}</h3>
+
+{% set recent_tickets = client.support_ticket_get_list({ "per_page": 5 }).list %}
+{% if recent_tickets %}
+<ul class="item-list">
+{% for ticket in recent_tickets %}
+<li class="item">
+<a href="{{ 'support/ticket'|link }}/{{ ticket.id }}" class="item-link">
+<div class="item-info">
+<div class="item-title">{{ ticket.subject|truncate(45) }}</div>
+<div class="item-meta">
+<span class="item-id">#{{ ticket.id }}</span>
+<span class="item-separator">·</span>
+<span class="item-updated" title="{{ ticket.updated_at|format_date }}">
+{{ ticket.updated_at|timeago }} {{ 'ago'|trans }}
+</span>
+</div>
+</div>
+<div class="item-status">
+{% set status_class = {
+    'open': 'badge-success',
+    'on_hold': 'badge-warning',
+    'closed': 'badge-secondary'
+}[ticket.status] ?? 'badge-default' %}
+<span class="badge {{ status_class }}">{{ mf.status_name(ticket.status) }}</span>
+</div>
+</a>
+</li>
+{% endfor %}
+</ul>
+{% else %}
+<div class="item-empty">
+<span>{{ 'No recent support tickets'|trans }}</span>
+</div>
+{% endif %}
+
+</div>
+</div>
+
+</div>
+
+
+
+
+
+{% else %}
+
+<!-- Dashboard for non logged in visitors -->
+
+<div class="dashboard-grid">
+
+<div class="card">
+<div class="card-header">
+<h2 class="card-title">{{ 'Account'|trans }}</h2>
+</div>
+<div class="card-body">
+<ul class="item-list">
+<li class="item">
+<a href="{{ '/login'|link }}" class="item-link">
+<div class="item-info">
+<div class="item-title">{{ 'Login'|trans }}</div>
+</div>
+</a>
+</li>
+<li class="item">
+<a href="{{ '/signup'|link }}" class="item-link">
+<div class="item-info">
+<div class="item-title">{{ 'Register'|trans }}</div>
+</div>
+</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="card">
+<div class="card-header">
+<h2 class="card-title">{{ 'Order'|trans }}</h2>
+</div>
+<div class="card-body">
+<ul class="item-list">
+<li class="item">
+<a href="{{ '/order'|link }}" class="item-link">
+<div class="item-info">
+<div class="item-title">{{ 'Order new products and services'|trans }}</div>
+</div>
+</a>
+</li>
+</ul>
+</div>
+</div>
+
+{% if guest.extension_is_on({"mod":"news"}) %}
+<div class="card">
+<div class="card-header">
+<h2 class="card-title">{{ 'News'|trans }}</h2>
+</div>
+<div class="card-body">
+<ul class="item-list">
+<li class="item">
+<a href="{{ '/news'|link }}" class="item-link">
+<div class="item-info">
+<div class="item-title">{{ 'Latest announcements'|trans }}</div>
+</div>
+</a>
+</li>
+</ul>
+</div>
+</div>
+{% endif %}
+
+{% if guest.support_kb_enabled() %}
+<div class="card">
+<div class="card-header">
+<h2 class="card-title">{{ 'Knowledge Base'|trans }}</h2>
+</div>
+<div class="card-body">
+<ul class="item-list">
+<li class="item">
+<a href="{{ '/support/kb'|link }}" class="item-link">
+<div class="item-info">
+<div class="item-title">{{ 'Browse help articles'|trans }}</div>
+</div>
+</a>
+</li>
+</ul>
+</div>
+</div>
+{% endif %}
+
+</div>
+{% endif %}
+{% endblock %}
