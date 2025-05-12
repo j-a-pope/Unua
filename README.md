@@ -12,5 +12,7 @@ The aim is for this to be done from the files within this theme, but at this mom
 
 - This is built largely as a project to test ideas and concepts, experiment with modern CSS, and as a learning project for myself.
 - This theme is not built using any existing layout/style frameworks, i.e. Bootstrap or Tabler. This is by design and will not change. 
-- It does not look like and is not intended to look like Huraga (FOSSBilling default client theme).
+- It does not look like and is not intended to look like Huraga (FOSSBilling default client theme). This is by design and will not change.
 - It is currently very incomplete and a work in progress.
+- Little or no work has been put into making the theme work on less than desktop screen sizes yet. That will come later. 
+- There is no light/dark mode switching yet. That will come later. 

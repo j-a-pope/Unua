@@ -1,0 +1,91 @@
+<header>
+    <div class="container header-flex">
+
+        <div class="header-logo">
+
+
+
+            <!-- TODO - Add logo size option to theme options -->
+
+            {% if logo_url and settings.show_company_logo %}
+                    <a href="{{ '/'|link }}">
+                        <img src="{{ logo_url }}" alt="{{ company.name }}" height="40px"
+                             title="{{ company.name }}">
+
+                    </a>
+                {% else %}
+                    <a href="{{ '/'|link }}">
+                        <span>{{ company.name }}</span>
+                    </a>
+                {% endif %}
+
+        </div>
+
+        <div id="header-controls" aria-label="User options">
+            <ul class="header-controls-menu">
+               <li>Language</li>
+
+           <!-- {% set languages = guest.extension_languages(true) %}
+                        {% if languages|length > 1 %}
+                            <li class="nav-item">
+                                <select name="lang" class="form-select js-language-selector">
+                                    {% for lang in languages %}
+                                        <option value="{{ lang.locale }}" data-custom-properties="&lt;span class=&quot;fi fi-{{ lang.locale|split('_')[1]|lower }}&quot;&gt;&lt;/span&gt;">&nbsp;{{ lang.title }}</option>
+                                    {% endfor %}
+                                </select>
+                            </li>
+                        {% endif %}  -->
+
+                {% if settings.top_menu_profile %}
+                    <li>
+                        {% if not client %}
+                            <a class="nav-link" href="{{ 'login'|link }}">{{ 'Login'|trans }}</a>
+                        {% endif %}
+                    </li>
+                {% endif %}
+
+
+
+                {% if settings.top_menu_signout %}
+                    <li>
+                        {% if client %}
+                        <li class="dropdown">
+                            <div class="dropdown-toggle">
+                                <img class="avatar" alt="{{ profile.first_name }} {{ profile.last_name }} gravatar"
+                                     src="{{ profile.email|gravatar(60) }}">
+                                <span>
+                                    {% if profile.company %}
+                                        {{ profile.first_name }} {{ profile.last_name }}<br />({{ profile.company }})
+                                    {% else %}
+                                        {{ profile.first_name }} {{ profile.last_name }}
+                                    {% endif %}
+                                </span>
+                                <span class="caret"></span>
+                            </div>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ 'client/profile'|link }}">{{ 'Profile'|trans }}</a></li>
+                                <li><a href="{{ 'client/logout'|link }}">{{ 'Sign out'|trans }}</a></li>
+                            </ul>
+                        </li>
+
+                        {% if settings.header_balance_enabled and client %}
+                            <li>
+                            {{ 'Balance'|trans }}<br />
+                            {{ profile.balance | money(profile.currency) }}
+                            </li>
+                        {% endif %}
+
+                                {% else %}
+                                    <a class="ms-2 btn btn-outline-primary d-none d-md-block"
+                                       href="{{ 'signup'|link }}">{{ 'Register'|trans }}</a>
+                                {% endif %}
+                            </li>
+                        {% endif %}
+
+
+            </ul>
+        </div>
+        </div>
+
+
+    </header>

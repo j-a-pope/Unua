@@ -1,0 +1,72 @@
+<div class="gradient-divider" role="separator" aria-hidden="true"></div>
+
+<footer class="site-footer" role="contentinfo">
+  <div class="container">
+
+
+<div class="footer-grid first-row">
+
+    <div class="footer-col">
+        <strong>{{ company.name }}</strong><br/>
+
+      {% if company.bank_info_pagebottom == 1 %}
+        <strong>{{ 'Payment Information'|trans }}</strong> -
+        {{ 'Bank Name'|trans }}: {{ company.bank_name }} |
+        {{ 'BIC / SWIFT Code'|trans }}: {{ company.bic }} |
+        {{ 'Account Number'|trans }}: {{ company.account_number }}
+      {% endif %}
+    </div>
+
+    <div class="footer-col">
+        <ul class="footer-links" aria-label="Footer links">
+            {% for i in 1..5 %}
+              {% set enabled = attribute(settings, 'footer_link_' ~ i ~ '_enabled') %}
+              {% if enabled %}
+                {% set href = attribute(settings, 'footer_link_' ~ i ~ '_page') %}
+                {% set title = attribute(settings, 'footer_link_' ~ i ~ '_title') %}
+                <li><a class="footer-link" href="{{ 'http' in href ? href : href | link }}">{{ title }}</a></li>
+              {% endif %}
+            {% endfor %}
+          </ul>
+
+    </div>
+
+    <div class="footer-col">
+        <ul class="footer-links" aria-label="Social media links">
+            {% for i in 1..5 %}
+    {% set enabled = attribute(settings, 'social_link_' ~ i ~ '_enabled') | default(false) %}
+    {% if enabled %}
+      {% set href = attribute(settings, 'social_link_' ~ i ~ '_page') | default('#') %}
+      {% set label = attribute(settings, 'social_link_' ~ i ~ '_title') | default('Social') %}
+      {% set icon = attribute(settings, 'social_link_' ~ i ~ '_icon') | default('fa-link') %}
+      <li>
+        <a class="footer-link" href="{{ href }}" target="_blank" rel="noopener noreferrer">
+          <i class="fab {{ icon }}"></i> {{ label }}
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
+
+    </div>
+  </div>
+
+    <!-- Second Row: 2 Columns -->
+    <div class="footer-grid second-row">
+      <div class="footer-col">
+        &copy; {{ now|format_date(pattern='yyyy') }} {{ settings.footer_signature | default(company.signature) }}
+      </div>
+
+      {% if guest.extension_is_on({"mod": 'branding'}) %}
+        <div class="footer-col">
+          Powered by the
+          <a class="footer-link" href="https://fossbilling.org" title="Billing Software" target="_blank">
+            {{ 'FOSSBilling Community'|trans }} <i class="fa fa-external-link" aria-hidden="true"></i>
+
+          </a>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</footer>
