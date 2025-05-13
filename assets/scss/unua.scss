@@ -1,350 +1,566 @@
-{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
 
-{% block meta_title %}{{ 'Client Area'|trans }}{% endblock %}
-{% block page_header %}{{ 'Dashboard'|trans }}{% endblock %}
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-{% block body_class %}dashboard{% endblock %}
-{% block breadcrumbs %}
-{% if not settings.hide_dashboard_breadcrumb %}
-<ul class="breadcrumb">
-<li><a href="{{ '/'|link }}">{{ 'Home'|trans }}</a> <span class="dropdown-divider">/</span></li>
-<li class="active">{{ 'Dashboard'|trans }}</li>
-</ul>
-{% endif %}
-{% endblock %}
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-{% import "macro_functions.html.twig" as mf %}
+html {
+    scroll-behavior: smooth;
+}
 
-{% block content %}
-{% if settings.showcase_enabled %}
-<div class="alert alert-info" role="alert">
+body {
+    background: var(--bg);
+    font-family: var(--font);
+}
 
-<p>{{ settings.showcase_text |markdown }}</p>
+a {
+    color: var(--highlight);
+    text-decoration: none;
+}
 
-{% if (settings.showcase_button_url) and (settings.showcase_button_title) %}
-<a class="btn btn-primary"
-href="{{ settings.showcase_button_url }}">{{ settings.showcase_button_title }}</a>
-{% endif %}
-</div>
-{% endif %}
+a:hover {color: var(--highlight-dark);}
 
-{% if client %}
-{% set tickets = client.support_ticket_get_list({ "status": 'on_hold' }) %}
-{% if tickets.total > 0 %}
-<div>
-<div>
-{% for i, ticket in tickets.list %}
-<div class="alert alert-info d-flex justify-content-between" role="alert">
-<span>Ticket <strong>#{{ ticket.id }}</strong> was responded {{ ticket.updated_at|timeago }} {{ 'ago'|trans }}.</span><a
-href="{{ 'support/ticket'|link }}/{{ ticket.id }}"
-class="alert-link">{{ 'Reply'|trans }}</a>
-</div>
-{% endfor %}
-</div>
-</div>
-{% endif %}
+header a {
+    color: var(--text);
+}
+
+header, main, footer {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    /* shorthand the padding values once finalised */
+}
+
+.container {
+    width: 98%;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 .5rem;
+}
+
+.gradient-divider {
+    height: 1.5px; /* Pick a value John dammit */
+    background: linear-gradient(to right,
+                                var(--text) 0%,
+                                var(--accent-dark) 8%,
+                                var(--accent-dark) 30%,
+                                var(--text) 90%,
+                                var(--accent-dark) 100%);
+    margin: 0;
+    border: none;
+}
+
+header {
+    padding-top: 1rem;
+}
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+#header-controls {
+font-size: .9rem;
+}
+
+.header-controls-menu {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.header-controls-menu li {
+    list-style: none;
+}
+
+#main-nav {
+position: sticky;
+top: 0;
+z-index: 999;
+background : var(--accent-light);
+border-top: 1px solid var(--text-muted);
+}
+
+// TODO - shrink nav and text when stickied.
+
+.nav-container {
+    background: var(--accent-light);
+
+}
+
+#main-nav ul {
+display: flex;
+gap: 10px;
+direction: ltr;
+flex-direction: row;
+margin: 0;
+
+}
+
+.nav-item {
+    padding: 10px;
+    list-style: none;
+}
+
+.nav-item a {
+    text-decoration: none;
+    color: var(--text);
+}
+
+.nav-item .svg-icon {
+    height: 1.2rem;
+    vertical-align: bottom;
+}
 
 
-<div class="dashboard-grid">
+.alert, .card-header, .card-body {
+    padding: 10px;
+}
 
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">{{ 'Services'|trans }}</h2>
-<div>
-<a class="btn btn-sm btn-primary order-button"
-href="{{ 'order'|link }}">{{ 'New order'|trans }}</a>
-<a class="btn btn-sm btn-dark"
-href="{{ 'order/service'|link }}">{{ 'All services'|trans }}</a>
-</div>
-</div>
-<div class="card-body">
-<dl class="info-grid">
-<dt>{{ 'Total'|trans }}</dt>
-<dd>{{ client.order_get_list({ "hide_addons": 1 }).total }}</dd>
+.card {
+    background: var(--bg-light);
+    box-shadow: 1px 1px 2px 1px var(--bg-dark);
+    border: 1px solid var(--text);
+    border-radius: 3px;
+}
 
-<dt>{{ 'Active'|trans }}</dt>
-<dd>{{ client.order_get_list({ "hide_addons": 1, "status": "active" }).total }}</dd>
+.card-header {
+    background: var(--accent-light);
+    border-bottom: 1px solid var(--accent-dark);
+    color: var(--text);
+    border-radius: 3px 3px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+}
 
-{% set expiring_total = client.order_get_list({ "expiring": 1 }).total %}
-<dt class="{{ expiring_total > 0 ? 'warn' : '' }}">{{ 'Expiring'|trans }}</dt>
-<dd class="{{ expiring_total > 0 ? 'warn' : '' }}">{{ expiring_total }}</dd>
-</dl>
+.card-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    margin: 0;
+    margin-top: .5rem;
 
-
-<hr>
-
-<h3 class="section-subtitle">{{ 'Recent orders'|trans }}</h3>
-
-{% set recent_orders = client.order_get_list({ "per_page": 5, "page": request.page, "hide_addons": 1 }).list %}
-{% if recent_orders %}
-<ul class="item-list">
-{% for order in recent_orders %}
-<li class="item">
-<a href="{{ 'order/service/manage'|link }}/{{ order.id }}" class="item-link">
-<div class="item-info">
-<div class="item-title">{{ order.title|truncate(45) }}</div>
-<div class="item-meta">
-<span class="item-id">#{{ order.id }}</span>
-<span class="item-separator">·</span>
-<span class="item-updated" title="{{ order.updated_at|format_date }}">
-{{ order.updated_at|timeago }} {{ 'ago'|trans }}
-</span>
-</div>
-</div>
-<div class="item-status">
-{% set status_class = {
-    'active': 'badge-success',
-    'pending_setup': 'badge-warning',
-    'failed_setup': 'badge-danger',
-    'suspended': 'badge-danger',
-    'failed_renew': 'badge-danger',
-    'canceled': 'badge-secondary'
-}[order.status] ?? 'badge-default' %}
-<span class="badge {{ status_class }}">{{ mf.status_name(order.status) }}</span>
-</div>
-</a>
-</li>
-{% endfor %}
-</ul>
-{% else %}
-<div class="item-empty">
-<span>{{ 'No recent orders'|trans }}</span>
-</div>
-{% endif %}
-
-
-</div>
-</div>
-
-
-
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">{{ 'Invoices'|trans }}</h2>
-<div>
-<a class="btn btn-sm btn-dark"
-href="{{ 'invoice'|link }}">{{ 'All Invoices'|trans }}</a>
-</div>
-</div>
-<div class="card-body">
-<dl class="info-grid">
-<dt>{{ 'Total'|trans }}</dt>
-<dd>{{ client.invoice_get_list().total }}</dd>
-
-<dt>{{ 'Paid'|trans }}</dt>
-<dd>{{ client.invoice_get_list({ "status": "paid" }).total }}</dd>
-
-{% set unpaid_total = client.invoice_get_list({ "status": "unpaid" }).total %}
-<dt class="{{ unpaid_total > 0 ? 'warn' : '' }}">{{ 'Unpaid'|trans }}</dt>
-<dd class="{{ unpaid_total > 0 ? 'warn' : '' }}">{{ unpaid_total }}</dd>
-</dl>
-
-<hr>
-
-<h3 class="section-subtitle">{{ 'Recent invoices'|trans }}</h3>
-
-{% set recent_invoices = client.invoice_get_list({ "per_page": 5 }).list %}
-{% if recent_invoices %}
-<ul class="item-list">
-{% for invoice in recent_invoices %}
-<li class="item">
-<a href="{{ 'invoice'|link }}/{{ invoice.hash }}" class="item-link">
-<div class="item-info">
-<div class="item-title-row">
-<span class="item-title">{{ invoice.title|default('Invoice') }}</span>
-<span class="item-amount">{{ invoice.total | money(invoice.currency) }}</span>
-</div>
-<div class="item-meta">
-<span class="item-id">#{{ invoice.id }}</span>
-<span class="item-separator">·</span>
-<span class="item-updated" title="{{ invoice.updated_at|format_date }}">
-{{ invoice.updated_at|timeago }} {{ 'ago'|trans }}
-</span>
-{% if invoice.status == 'unpaid' %}
-<span class="item-separator">·</span>
-<span class="item-pay-link">{{ 'Pay now'|trans }}</span>
-{% endif %}
-</div>
-</div>
-<div class="item-status">
-{% set status_class = {
-    'paid': 'badge-success',
-    'unpaid': 'badge-warning',
-    'refunded': 'badge-secondary',
-    'canceled': 'badge-secondary'
-}[invoice.status] ?? 'badge-default' %}
-<span class="badge {{ status_class }}">{{ mf.status_name(invoice.status) }}</span>
-</div>
-</a>
-</li>
-
-{% endfor %}
-</ul>
-
-{% else %}
-<div class="item-empty">
-<span>{{ 'No recent invoices'|trans }}</span>
-</div>
-{% endif %}
-
-</div>
-</div>
+}
 
 
 
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">{{ 'Tickets'|trans }}</h2>
-<div>
-<a class="btn btn-sm btn-primary"
-href="{{ 'support'|link({ 'ticket': 1 }) }}">{{ 'New ticket'|trans }}</a>
-<a class="btn btn-sm btn-dark" href="{{ 'support'|link }}">{{ 'All tickets'|trans }}</a>
-</div>
-</div>
-<div class="card-body">
-<dl class="info-grid">
-<dt>{{ 'Total'|trans }}</dt>
-<dd>{{ client.support_ticket_get_list().total }}</dd>
+.card-header div {
+    margin-top: .5rem;
+    margin-bottom: .5rem;
+}
 
-<dt>{{ 'Open'|trans }}</dt>
-<dd>{{ client.support_ticket_get_list({ "status": 'open' }).total }}</dd>
+.card-body {
+    background: var(--bg-light);
+    color: var(--text);
+    border-radius: 0 0 3px 3px;
+}
 
-<dt>{{ 'On Hold'|trans }}</dt>
-<dd>{{ client.support_ticket_get_list({ "status": 'on_hold' }).total }}</dd>
-</dl>
+.card-body hr {
+    margin-top: 1lh;
+    margin-bottom: 1lh;
+    color: var(--accent-light);
+}
 
-<hr>
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1rem 1.5rem; // row gap, then column gap
+    margin: 0;
+    padding: 0;
+    font-size: .9rem;
+}
 
-<h3 class="section-subtitle">{{ 'Recent tickets'|trans }}</h3>
+.info-grid dt {
+    font-weight: 600;
+    color: var(--muted-text, #666);
+    margin: 0;
+}
 
-{% set recent_tickets = client.support_ticket_get_list({ "per_page": 5 }).list %}
-{% if recent_tickets %}
-<ul class="item-list">
-{% for ticket in recent_tickets %}
-<li class="item">
-<a href="{{ 'support/ticket'|link }}/{{ ticket.id }}" class="item-link">
-<div class="item-info">
-<div class="item-title">{{ ticket.subject|truncate(45) }}</div>
-<div class="item-meta">
-<span class="item-id">#{{ ticket.id }}</span>
-<span class="item-separator">·</span>
-<span class="item-updated" title="{{ ticket.updated_at|format_date }}">
-{{ ticket.updated_at|timeago }} {{ 'ago'|trans }}
-</span>
-</div>
-</div>
-<div class="item-status">
-{% set status_class = {
-    'open': 'badge-success',
-    'on_hold': 'badge-warning',
-    'closed': 'badge-secondary'
-}[ticket.status] ?? 'badge-default' %}
-<span class="badge {{ status_class }}">{{ mf.status_name(ticket.status) }}</span>
-</div>
-</a>
-</li>
-{% endfor %}
-</ul>
-{% else %}
-<div class="item-empty">
-<span>{{ 'No recent support tickets'|trans }}</span>
-</div>
-{% endif %}
+.info-grid dd {
+    margin: 0;
+    color: var(--body-text, #222);
+}
 
-</div>
-</div>
-
-</div>
+.info-grid .warn {
+    color: #d9534f; // Should probably replace this with a var that can be used elsewhere
+}
 
 
 
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+
+    @media (min-width: 1024px) {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+footer {
+    background: var(--bg-dark);
+}
+
+footer ul {
+    list-style-type: none;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.footer-grid.first-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: .5rem;
+    margin-bottom: 1rem;
+}
+
+.footer-grid.first-row .footer-col:not(:first-child) {
+    border-left: 2px solid var(--accent-dark);
+    padding-left: 10px;
+}
+
+.footer-grid.second-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.9rem;
+    border-top: 2px solid var(--accent-dark); /* Horizontal line */
+    padding-top: .5rem; /* Space between line and content */
+    margin-top: 1rem;
+}
+
+.footer-col {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.footer-grid.second-row > div:nth-child(1) {
+    text-align: left;
+}
+
+.footer-grid.second-row > div:nth-child(2) {
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .footer-grid.second-row {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+}
 
 
-{% else %}
+.footer-grid i.fab {
+    font-size: 1rem;
+    padding-right: .5rem;
+}
 
-<!-- Dashboard for non logged in visitors -->
 
-<div class="dashboard-grid">
+.footer-link {
+    color: var(--text);
+    text-decoration: none;
+}
 
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">{{ 'Account'|trans }}</h2>
-</div>
-<div class="card-body">
-<ul class="item-list">
-<li class="item">
-<a href="{{ '/login'|link }}" class="item-link">
-<div class="item-info">
-<div class="item-title">{{ 'Login'|trans }}</div>
-</div>
-</a>
-</li>
-<li class="item">
-<a href="{{ '/signup'|link }}" class="item-link">
-<div class="item-info">
-<div class="item-title">{{ 'Register'|trans }}</div>
-</div>
-</a>
-</li>
-</ul>
-</div>
-</div>
+.footer-link:hover {
+    color: var(--highlight);
+}
 
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">{{ 'Order'|trans }}</h2>
-</div>
-<div class="card-body">
-<ul class="item-list">
-<li class="item">
-<a href="{{ '/order'|link }}" class="item-link">
-<div class="item-info">
-<div class="item-title">{{ 'Order new products and services'|trans }}</div>
-</div>
-</a>
-</li>
-</ul>
-</div>
-</div>
 
-{% if guest.extension_is_on({"mod":"news"}) %}
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">{{ 'News'|trans }}</h2>
-</div>
-<div class="card-body">
-<ul class="item-list">
-<li class="item">
-<a href="{{ '/news'|link }}" class="item-link">
-<div class="item-info">
-<div class="item-title">{{ 'Latest announcements'|trans }}</div>
-</div>
-</a>
-</li>
-</ul>
-</div>
-</div>
-{% endif %}
+.btn {
+    padding: 5px;
+    border: 1px solid var(--text);
+    color: var(--text);
+    border-radius: 2px;
+}
 
-{% if guest.support_kb_enabled() %}
-<div class="card">
-<div class="card-header">
-<h2 class="card-title">{{ 'Knowledge Base'|trans }}</h2>
-</div>
-<div class="card-body">
-<ul class="item-list">
-<li class="item">
-<a href="{{ '/support/kb'|link }}" class="item-link">
-<div class="item-info">
-<div class="item-title">{{ 'Browse help articles'|trans }}</div>
-</div>
-</a>
-</li>
-</ul>
-</div>
-</div>
-{% endif %}
+.btn-dark {
+    background: var(--highlight-dark);
+}
 
-</div>
-{% endif %}
-{% endblock %}
+
+
+.btn-primary {
+    background: var(--highlight);
+}
+
+.btn-primary:hover {
+    background: var(--highlight-light);
+}
+
+.btn-dismiss {
+    position: absolute;
+    top: .5rem;
+    right: .5rem;
+}
+
+.alert {
+    border-radius: 3px;
+    position: relative;
+}
+
+.alert.alert-info {
+    background: var(--bg-dark);
+    border: 1px solid var(--text);
+    color: var(--text);
+    margin-bottom: 1.5rem;
+}
+
+
+
+.dropdown {
+    position: relative;
+
+    .dropdown-toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .avatar {
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: var(--bg-light);
+        border: 1px solid var(--accent-dark);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        list-style: none;
+        padding: 0.5rem 0;
+        margin: 0;
+        display: none;
+        min-width: 160px;
+        z-index: 1000;
+
+        a {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+
+            &:hover {
+                background-color: var(--accent-light);
+                color: var(--highlight);
+            }
+        }
+    }
+
+    &:hover .dropdown-menu {
+        display: block;
+    }
+}
+
+.dropdown-toggle {
+    position: relative;
+    padding-right: 6px;
+
+    .caret {
+        display: inline-block;
+        margin-left: 6px;
+        width: 0;
+        height: 0;
+        vertical-align: middle;
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;
+        border-top: 5px solid var(--text);
+    }
+}
+
+.dropdown:hover .caret {
+    transform: rotate(180deg);
+    transition: transform 0.2s ease;
+}
+
+.breadcrumb {
+    list-style: none;
+    display: flex;
+    margin-bottom: 1rem;
+}
+
+.breadcrumb li {
+    color: var(--text-muted);
+}
+
+.breadcrumb li + li::before {
+    content: "›"; /* Maybe a nicer separator */
+    margin: 0 0.5em;
+    color: var(--text-muted);
+}
+
+.btn-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    z-index: 1000;
+}
+
+body.scrolled .btn-top {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+
+.section-subtitle {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    border-top: 1px solid var(--border-color, #e0e0e0);
+}
+
+.item {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.item-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.item-title {
+    font-weight: 400;
+    font-size: .9rem;
+}
+
+.item-meta {
+    font-size: 0.85rem;
+    color: var(--muted-text, #666);
+}
+
+.item-id {
+    font-family: monospace;
+}
+
+.item-separator {
+    margin: 0 0.5rem;
+    color: #ccc;
+}
+
+.item-updated {
+    white-space: nowrap;
+}
+
+.item-status .badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.badge-success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.badge-warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.badge-danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.badge-secondary {
+    background-color: #e2e3e5;
+    color: #383d41;
+}
+
+.badge-default {
+    background-color: #dee2e6;
+    color: #212529;
+}
+
+.item-empty {
+    text-align: center;
+    font-style: italic;
+    color: var(--muted-text, #666);
+    margin-top: 1rem;
+}
+
+
+/* Mess below that should be merged with above styles (if it works) */
+
+
+
+.item-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    font-weight: 400;
+    font-size: .9rem;
+}
+
+.item-amount {
+    white-space: nowrap;
+    color: var(--body-text, #222);
+}
+
+.item-pay-link {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--link-color, #007bff);
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+.item:hover {
+    background: var(--highlight-light);
+}
+
+.item a:hover {
+    color: var(--text);
+}

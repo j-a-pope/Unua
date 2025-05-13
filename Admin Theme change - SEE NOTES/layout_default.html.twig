@@ -1,0 +1,434 @@
+{% import 'macro_functions.html.twig' as mf %}
+
+{% set profile = admin.profile_get %}
+{% set company = guest.system_company %}
+
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+    <title>{% block meta_title %}{% endblock %} - {{ company.name }}</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ CSRFToken }}">
+
+    <link rel="shortcut icon" href="{{ company.favicon_url }}">
+    <link href="https://fonts.googleapis.com/css2?family=Arimo&family=Inter&family=Montserrat&display=swap" rel="stylesheet">
+
+    {% include 'partial_bb_meta.html.twig' %}
+
+    {{ encore_entry_link_tags('fossbilling') }}
+    {{ "Api/API.js" | library_url | script_tag }}
+    {{ encore_entry_script_tags('fossbilling') }}
+    {{ DebugBar_renderHead() }}
+
+    {% block head %}{% endblock %}
+<style>
+.preview-box {
+  width: 100px;
+  height: 40px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-family: sans-serif;
+  border: 1px solid var(--tblr-border-color);
+}
+
+.input-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.input-preview-row input[type="text"] {
+  flex: 1;
+  max-width: 250px;
+}
+
+.input-preview-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+#font-preview {
+  margin-left: 12px;
+  padding-left: 12px;
+  font-size: 1.2rem;
+}
+
+</style>
+</head>
+
+<body data-bs-theme="dark">
+    <script>
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute("data-bs-theme", localStorage.getItem('theme'));
+        } else {
+            document.body.removeAttribute("data-bs-theme");
+        }
+
+        {% if not admin %}
+            $(function () {
+                bb.redirect("{{ 'staff/login'|alink }}");
+            });
+        {% else %}
+    </script>
+    {% if hide_menu %}
+    {% block content_wide %}{% endblock %}
+    {% else %}
+    <div class="page">
+        {% block nav %}{% endblock %}
+        <div class="page-wrapper">
+            {% block before_content %}{% endblock %}
+            <header class="navbar navbar-expand-lg navbar-light d-print-none">
+               <div class="container-xl">
+                   <div class="d-flex gap-3 align-items-center">
+                       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu" aria-controls="navbar-menu" aria-expanded="false" aria-label="Toggle navigation">
+                           <span class="navbar-toggler-icon"></span>
+                       </button>
+                       <h1 class="d-none d-sm-flex navbar-brand d-none-navbar-horizontal pe-0 pe-md-3 a">
+                           <a href="{{ '/'|alink }}">
+                               <img class="navbar-brand-image hide-theme-light" src="{{ company.logo_url_dark }}" alt="{{ company.name }}">
+                               <img class="navbar-brand-image hide-theme-dark" src="{{ company.logo_url }}" alt="{{ company.name }}">
+                           </a>
+                       </h1>
+                   </div>
+                  <div class="navbar-nav flex-row order-md-last gap-2">
+                    {% set languages = guest.extension_languages(true) %}
+                    {% if languages|length > 1 %}
+                    <div class="nav-item">
+                        <select name="lang" class="form-select js-language-selector">
+                            {% for lang in languages %}
+                                <option value="{{ lang.locale }}" data-custom-properties="&lt;span class=&quot;flag flag-country-{{ lang.locale|split('_')[1]|lower }} &quot;&gt;&lt;/span&gt;">{{ lang.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                     <div class="nav-item d-none d-sm-flex">
+                        <div class="btn-list gap-2">
+                           <a href="https://github.com/FOSSBilling/FOSSBilling" class="btn px-3" target="_blank" rel="noreferrer">
+                              <svg class="icon icon-tabler icon-tabler-arrow-back-up m-0">
+                                 <use xlink:href="#brand-github" />
+                              </svg>
+                              <span class="d-none d-md-block ms-2">GitHub</span>
+                           </a>
+                           <a href="https://github.com/sponsors/FOSSBilling" class="btn px-3" target="_blank" rel="noreferrer">
+                              <svg class="icon icon-tabler icon-tabler-heart m-0 text-pink">
+                                 <use xlink:href="#heart" />
+                              </svg>
+                              <span class="d-none d-md-block ms-2">{{ 'Sponsor'|trans }}</span>
+                           </a>
+                        </div>
+                     </div>
+                      <div class="nav-item">
+                        <a class="nav-link px-0 hide-theme-dark js-theme-toggler"
+                           href="?theme=dark"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="bottom"
+                           data-bs-original-title="{{ 'Enable dark mode'|trans }}">
+                           <svg class="icon text-dark">
+                              <use xlink:href="#moon" />
+                           </svg>
+                        </a>
+                        <a class="nav-link px-0 hide-theme-light js-theme-toggler"
+                           href="?theme=light"
+                           data-bs-toggle="tooltip"
+                           data-bs-placement="bottom"
+                           data-bs-original-title="{{ 'Enable light mode'|trans }}">
+                           <svg class="icon text-white">
+                              <use xlink:href="#sun" />
+                           </svg>
+                        </a>
+                     </div>
+                     <div class="nav-item dropdown">
+                        <a class="nav-link d-flex lh-1 text-reset p-0"
+                           href="{{ 'staff/profile'|alink }}"
+                           data-bs-toggle="dropdown"
+                           aria-label="Open user menu"
+                           aria-expanded="false">
+                           <span class="avatar avatar-sm" style="background-image: url({{ profile.email|gravatar }}&size=32)"></span>
+                           <div class="d-none d-xl-block ps-2">
+                              <div>{{ profile.name }}</div>
+                              <div class="mt-1 small text-muted">{{ profile.role }}</div>
+                           </div>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                           <a class="dropdown-item"
+                              href="{{ 'staff/profile'|alink }}">{{ 'Profile'|trans }}</a>
+                           <a class="dropdown-item"
+                              href="{{ 'system'|alink }}">{{ 'Settings'|trans }}</a>
+                           <div class="dropdown-divider"></div>
+                           <a class="dropdown-item api-link"
+                              href="{{ 'api/admin/profile/logout'|link({ 'CSRFToken': CSRFToken }) }}"
+                              data-api-redirect="{{ 'staff/login'|alink }}">{{ 'Logout'|trans }}</a>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </header>
+            <nav class="navbar-expand-lg sticky-nav">
+                <div class="collapse navbar-collapse" id="navbar-menu">
+                    <div class="navbar navbar-light">
+                        <div class="container-xl">
+                             {% set navigation = admin.extension_get_navigation({ 'url': guest.system_current_url }) %}
+                             <ul class="navbar-nav">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ '/'|alink }}">
+                                        <span class="d-none d-xxl-block me-1">
+                                            <svg class="icon">
+                                                <use xlink:href="#home" />
+                                            </svg>
+                                        </span>
+                                        <span>{{ 'Dashboard' |trans }}</span>
+                                    </a>
+                                  </li>
+                             {% for location, group in navigation %}
+                             {% if group.subpages %}
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                                        <svg class="icon icon-tabler icon-tabler-arrow-back-up d-none d-xxl-block me-1">
+                                            <use xlink:href="#{{ group.class }}" />
+                                         </svg>
+                                        <span class="nav-link-title">{{ group.label|trans }}</span>
+                                      </a>
+                                      <div class="dropdown-menu">
+                                        <div class="dropdown-menu-columns">
+                                            <div class="dropdown-menu-column">
+                                                {% for subpage in group.subpages %}
+                                                <a class="dropdown-item" href="{{ subpage.uri }}">{{ subpage.label|trans }}</a>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endif %}
+                            {% endfor %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                                    <svg class="icon icon-tabler icon-tabler-arrow-back-up d-none d-xxl-block me-1">
+                                        <use xlink:href="#help" />
+                                     </svg>
+                                    <span class="nav-link-title">{{ 'Help'|trans }}</span>
+                                  </a>
+                                  <div class="dropdown-menu">
+                                    <div class="dropdown-menu-columns">
+                                        <div class="dropdown-menu-column">
+                                            <a class="dropdown-item" href="https://fossbilling.org/docs" target="_blank" rel="noopener">{{ 'Documentation'|trans }}</a>
+                                            <a class="dropdown-item" href="https://github.com/FOSSBilling/FOSSBilling" target="_blank" rel="noopener">GitHub</a>
+                                            <a class="dropdown-item" href="https://github.com/FOSSBilling/FOSSBilling/issues" target="_blank" rel="noopener">{{ 'Report a bug'|trans }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                        </div>
+                    </div>
+                  </div>
+            </nav>
+            <main class="page-body">
+                <div class="container-xl">
+                    <nav class="mb-3" aria-label="breadcrumb">
+                        {% block breadcrumbs %}
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ '/'|alink }}">
+                                    <svg class="icon">
+                                        <use xlink:href="#home" />
+                                    </svg>
+                                </a>
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">{{ block('meta_title') }}</li>
+                        </ol>
+                        {% endblock %}
+                    </nav>
+                    {% block top_content %}{% endblock %}
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
+
+            <footer class="footer footer-transparent d-print-none">
+                <div class="container-xl">
+                    <p>&copy; {{ now|format_date(pattern='yyyy') }} <a href="https://github.com/FOSSBilling">FOSSBilling contributors</a>.
+                    Licensed under <a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0</a>.
+                    Running version <code>{{ FOSSBillingVersion }}</code>.</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="loading dim"></div>
+
+    <div class="d-none">
+        {% include '../build/symbol/icons-sprite.svg' %}
+    </div>
+
+    <button type="button" aria-label="Back to top" class="btn btn-floating btn-lg btn-icon hidden" id="back-to-top">
+        <svg class="icon">
+            <use xlink:href="#arrow-up" />
+        </svg>
+    </button>
+
+    {% block js %}{% endblock %}
+
+    <noscript id="noscript">
+        <div class="msg error">NOTE: Many features on FOSSBilling require Javascript and cookies. You can enable both via your browser's preference settings.</div>
+    </noscript>
+    {% endif %}
+
+    {{ DebugBar_render() }}
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1070;">
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const colorFields = {
+    bg: ['Background', 'Light', 'Dark'],
+    text: ['Text', 'Muted'],
+    accent: ['Accent', 'Light', 'Dark'],
+    highlight: ['Highlight', 'Light', 'Dark']
+  };
+
+  const fallbackColors = {
+    bg: 'hsl(210, 30%, 94%)',
+    text: 'hsl(210, 25%, 15%)',
+    accent: 'hsl(340, 80%, 50%)',
+    highlight: 'hsl(50, 90%, 50%)'
+  };
+
+  const parseHSL = (hsl) => {
+    const match = hsl.match(/^hsl\(\s*(\d+),\s*(\d+)%\s*,\s*(\d+)%\s*\)$/i);
+    return match ? {
+      h: parseInt(match[1], 10),
+      s: parseInt(match[2], 10),
+      l: parseInt(match[3], 10)
+    } : null;
+  };
+
+  const toHSL = ({ h, s, l }) => `hsl(${h}, ${s}%, ${l}%)`;
+
+  const getTextColor = (hsl) => {
+    const parsed = parseHSL(hsl);
+    return parsed && parsed.l > 60 ? 'black' : 'white';
+  };
+
+  const createPreviewBox = (label, color) => {
+    const box = document.createElement("div");
+    box.className = "preview-box";
+    box.style.background = color;
+    box.style.color = getTextColor(color);
+    box.textContent = label;
+    return box;
+  };
+
+  const ensureHiddenInput = (form, name) => {
+    let existing = form.querySelector(`input[name="${name}"]`);
+    if (!existing) {
+      existing = document.createElement("input");
+      existing.type = "hidden";
+      existing.name = name;
+      form.appendChild(existing);
+    }
+    return existing;
+  };
+
+  const form = document.querySelector('form');
+
+  Object.entries(colorFields).forEach(([key, labels]) => {
+    const input = document.getElementById(`theme_${key}`);
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "input-preview-row"; // Reuse consistent class
+
+    input.parentElement.insertBefore(wrapper, input.nextSibling);
+    wrapper.appendChild(input);
+
+    const previewRow = document.createElement("div");
+    previewRow.style.display = "flex";
+    previewRow.style.gap = "6px";
+    wrapper.appendChild(previewRow);
+
+    const updateColor = () => {
+      let val = input.value.trim();
+      if (!val) {
+        val = fallbackColors[key];
+        input.value = val;
+      }
+
+      const base = parseHSL(val);
+      previewRow.innerHTML = "";
+
+      if (!base) {
+        const errorBox = createPreviewBox("Invalid HSL", "#ccc");
+        errorBox.style.color = "black";
+        previewRow.appendChild(errorBox);
+        return;
+      }
+
+      const variants = [];
+
+      if (key === 'bg' || key === 'accent' || key === 'highlight') {
+        variants.push(
+          { name: `${key}`, label: labels[0], value: toHSL(base) },
+          { name: `${key}_light`, label: labels[1], value: toHSL({ ...base, l: Math.min(100, base.l + 15) }) },
+          { name: `${key}_dark`, label: labels[2], value: toHSL({ ...base, l: Math.max(0, base.l - 8) }) }
+        );
+      } else if (key === 'text') {
+        variants.push(
+          { name: `${key}`, label: labels[0], value: toHSL(base) },
+          { name: `${key}_muted`, label: labels[1], value: toHSL({ ...base, s: Math.max(0, base.s - 30), l: Math.min(100, base.l + 20) }) }
+        );
+      }
+
+      variants.forEach(v => {
+        const box = createPreviewBox(v.label, v.value);
+        previewRow.appendChild(box);
+
+        // Save variant to hidden input
+        const hidden = ensureHiddenInput(form, `theme_${v.name}`);
+        hidden.value = v.value;
+      });
+    };
+
+    input.addEventListener("input", updateColor);
+    updateColor();
+  });
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const select = document.getElementById('font-choice');
+  const preview = document.getElementById('font-preview');
+
+  if (!select || !preview) return; // exit if not found
+
+  const fontMap = {
+    arimo: "'Arimo', sans-serif",
+    inter: "'Inter', sans-serif",
+    montserrat: "'Montserrat', sans-serif"
+  };
+
+  function updateFontPreview() {
+    const selectedFont = select.value;
+    preview.style.fontFamily = fontMap[selectedFont] || "sans-serif";
+  }
+
+  select.addEventListener('change', updateFontPreview);
+  updateFontPreview();
+});
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -16,17 +16,46 @@
 {% import "macro_functions.html.twig" as mf %}
 
 {% block content %}
-    {% if settings.showcase_enabled %}
-        <div class="alert alert-info" role="alert">
+{% if settings.showcase_enabled == '1' %}
+    <div class="alert alert-info" role="alert" id="showcase-alert">
+        {% if settings.showcase_dismissable == '1' and settings.showcase_version %}
+            <button type="button" class="close" aria-label="Close" onclick="dismissShowcase('{{ settings.showcase_version }}')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        {% endif %}
 
-            <p>{{ settings.showcase_text |markdown }}</p>
+        <p>{{ settings.showcase_text | markdown }}</p>
 
-            {% if (settings.showcase_button_url) and (settings.showcase_button_title) %}
-                <a class="btn btn-primary"
-                   href="{{ settings.showcase_button_url }}">{{ settings.showcase_button_title }}</a>
-            {% endif %}
-        </div>
+        {% if settings.showcase_button_url and settings.showcase_button_title %}
+            <a class="btn btn-primary" href="{{ settings.showcase_button_url }}">
+                {{ settings.showcase_button_title }}
+            </a>
+        {% endif %}
+    </div>
+
+    {% if settings.showcase_dismissable == '1' and settings.showcase_version %}
+        <script>
+            const versionKey = 'showcaseDismissedVersion';
+            const currentVersion = '{{ settings.showcase_version }}';
+
+            if (localStorage.getItem(versionKey) === currentVersion) {
+                document.getElementById('showcase-alert').style.display = 'none';
+            }
+
+            function dismissShowcase(version) {
+                localStorage.setItem(versionKey, version);
+                document.getElementById('showcase-alert').style.display = 'none';
+            }
+        </script>
+        <!-- Yes, yes, the script will be moved to the .js file in assets when I am happy with it.-->
+
+        <!-- TODO - Make showcase version auto-increment on change instead of needing a manual version number.
+                  - Ultimately make dismissal persist by using cookie instead of local storage maybe? -->
     {% endif %}
+{% endif %}
+
+
+
 
     {% if client %}
         {% set tickets = client.support_ticket_get_list({ "status": 'on_hold' }) %}

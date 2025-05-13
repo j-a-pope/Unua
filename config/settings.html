@@ -157,34 +157,52 @@
         <tr>
             <td><label>Enable Dashboard for Guests</label></td>
             <td>
-                <label><input type="radio" name="require_login" value="0" id="require_login_1" checked="checked">Yes</label>
-                <label><input type="radio" name="require_login" value="1" id="require_login_0">No</label>
+                <label><input type="radio" name="require_login" value="0" id="require_login_1" {% if settings.require_login == '0' %}checked="checked"{% endif %}>Yes</label>
+                <label><input type="radio" name="require_login" value="1" id="require_login_0" {% if settings.require_login == '1' %}checked="checked"{% endif %}>No</label>
             </td>
         </tr>
     </table>
+
     <h3>Showcase</h3>
     <table>
         <tr>
             <td><label>Enable Showcase</label></td>
             <td>
-                <label><input type="radio" name="showcase_enabled" value="1" id="showcase_enabled_1">Yes</label>
-                <label><input type="radio" name="showcase_enabled" value="0" id="showcase_enabled_0" checked="checked">No</label>
+                <label><input type="radio" name="showcase_enabled" value="1" id="showcase_enabled_1" {% if settings.showcase_enabled == '1' %}checked="checked"{% endif %}>Yes</label>
+                <label><input type="radio" name="showcase_enabled" value="0" id="showcase_enabled_0" {% if settings.showcase_enabled != '1' %}checked="checked"{% endif %}>No</label>
             </td>
         </tr>
+
         <tr>
             <td><label for="showcase_text">Showcase text</label></td>
-            <td><textarea id="showcase_text" name="showcase_text"></textarea></td>
+            <td><textarea id="showcase_text" name="showcase_text">{{ settings.showcase_text }}</textarea></td>
         </tr>
+
         <tr>
             <td><label for="showcase_button_title">Showcase button title</label></td>
-            <td><input type="text" name="showcase_button_title" id="showcase_button_title" value=""></td>
+            <td><input type="text" name="showcase_button_title" id="showcase_button_title" value="{{ settings.showcase_button_title }}"></td>
         </tr>
+
         <tr>
             <td><label for="showcase_button_url">Showcase link URL</label></td>
-            <td><input type="text" name="showcase_button_url" id="showcase_button_url" value=""></td>
+            <td><input type="text" name="showcase_button_url" id="showcase_button_url" value="{{ settings.showcase_button_url }}"></td>
+        </tr>
+
+        <tr>
+            <td><label for="showcase_dismissable">Allow clients to dismiss showcase</label></td>
+            <td>
+                <label><input type="radio" name="showcase_dismissable" value="1" {% if settings.showcase_dismissable == '1' %}checked="checked"{% endif %}>Yes</label>
+                <label><input type="radio" name="showcase_dismissable" value="0" {% if settings.showcase_dismissable != '1' %}checked="checked"{% endif %}>No</label>
+            </td>
+        </tr>
+
+        <tr>
+            <td><label for="showcase_version">Showcase version</label></td>
+            <td><input type="text" name="showcase_version" id="showcase_version" value="{{ settings.showcase_version }}"></td>
         </tr>
     </table>
 </fieldset>
+
 
 
 
