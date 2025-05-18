@@ -19,7 +19,7 @@
 {% if settings.showcase_enabled == '1' %}
     <div class="alert alert-info" role="alert" id="showcase-alert">
         {% if settings.showcase_dismissable == '1' and settings.showcase_version %}
-            <button type="button" class="close" aria-label="Close" onclick="dismissShowcase('{{ settings.showcase_version }}')">
+            <button type="button" class="btn btn-primary btn-dismiss" aria-label="Close" onclick="dismissShowcase('{{ settings.showcase_version }}')">
                 <span aria-hidden="true">&times;</span>
             </button>
         {% endif %}
@@ -49,12 +49,12 @@
         </script>
         <!-- Yes, yes, the script will be moved to the .js file in assets when I am happy with it.-->
 
-        <!-- TODO - Make showcase version auto-increment on change instead of needing a manual version number.
+        <!-- TODO - Make showcase version auto-increment on change instead of needing a manual version number. 
                   - Ultimately make dismissal persist by using cookie instead of local storage maybe? -->
     {% endif %}
 {% endif %}
 
-
+    
 
 
     {% if client %}
@@ -75,7 +75,7 @@
 
 
         <div class="dashboard-grid">
-
+           
                     <div class="card">
                         <div class="card-header">
                             <h2 class="card-title">{{ 'Services'|trans }}</h2>
@@ -90,16 +90,16 @@
                             <dl class="info-grid">
                                 <dt>{{ 'Total'|trans }}</dt>
                                 <dd>{{ client.order_get_list({ "hide_addons": 1 }).total }}</dd>
-
+                              
                                 <dt>{{ 'Active'|trans }}</dt>
                                 <dd>{{ client.order_get_list({ "hide_addons": 1, "status": "active" }).total }}</dd>
-
+                              
                                 {% set expiring_total = client.order_get_list({ "expiring": 1 }).total %}
                                 <dt class="{{ expiring_total > 0 ? 'warn' : '' }}">{{ 'Expiring'|trans }}</dt>
                                 <dd class="{{ expiring_total > 0 ? 'warn' : '' }}">{{ expiring_total }}</dd>
                             </dl>
 
-
+                          
                         <hr>
 
                         <h3 class="section-subtitle">{{ 'Recent orders'|trans }}</h3>
@@ -140,7 +140,7 @@
                                 <span>{{ 'No recent orders'|trans }}</span>
                             </div>
                         {% endif %}
-
+                        
 
 </div>
 </div>
@@ -159,10 +159,10 @@
         <dl class="info-grid">
             <dt>{{ 'Total'|trans }}</dt>
             <dd>{{ client.invoice_get_list().total }}</dd>
-
+          
             <dt>{{ 'Paid'|trans }}</dt>
             <dd>{{ client.invoice_get_list({ "status": "paid" }).total }}</dd>
-
+          
             {% set unpaid_total = client.invoice_get_list({ "status": "unpaid" }).total %}
             <dt class="{{ unpaid_total > 0 ? 'warn' : '' }}">{{ 'Unpaid'|trans }}</dt>
             <dd class="{{ unpaid_total > 0 ? 'warn' : '' }}">{{ unpaid_total }}</dd>
@@ -206,7 +206,7 @@
       </div>
     </a>
   </li>
-
+  
 {% endfor %}
 </ul>
 
@@ -234,10 +234,10 @@
                             <dl class="info-grid">
                                 <dt>{{ 'Total'|trans }}</dt>
                                 <dd>{{ client.support_ticket_get_list().total }}</dd>
-
+                              
                                 <dt>{{ 'Open'|trans }}</dt>
                                 <dd>{{ client.support_ticket_get_list({ "status": 'open' }).total }}</dd>
-
+                              
                                 <dt>{{ 'On Hold'|trans }}</dt>
                                 <dd>{{ client.support_ticket_get_list({ "status": 'on_hold' }).total }}</dd>
                             </dl>
@@ -279,20 +279,20 @@
                                     <span>{{ 'No recent support tickets'|trans }}</span>
                                 </div>
                             {% endif %}
-
+                            
                         </div>
                     </div>
-
-        </div>
-
-
-
-
-
+        
+        </div> 
+               
+          
+                
+               
+                               
     {% else %}
 
     <!-- Dashboard for non logged in visitors -->
-
+        
     <div class="dashboard-grid">
 
         <div class="card">
@@ -318,7 +318,7 @@
             </ul>
           </div>
         </div>
-
+      
         <div class="card">
           <div class="card-header">
             <h2 class="card-title">{{ 'Order'|trans }}</h2>
@@ -335,7 +335,7 @@
             </ul>
           </div>
         </div>
-
+      
         {% if guest.extension_is_on({"mod":"news"}) %}
         <div class="card">
           <div class="card-header">
@@ -354,7 +354,7 @@
           </div>
         </div>
         {% endif %}
-
+      
         {% if guest.support_kb_enabled() %}
         <div class="card">
           <div class="card-header">
@@ -373,7 +373,7 @@
           </div>
         </div>
         {% endif %}
-
-      </div>
+      
+      </div> 
     {% endif %}
 {% endblock %}

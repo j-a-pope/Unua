@@ -1,11 +1,12 @@
-<div class="gradient-divider" role="separator" aria-hidden="true"></div>
 
 <footer class="site-footer" role="contentinfo">
+    <div class="gradient-divider" role="separator" aria-hidden="true"></div>
+
   <div class="container">
-
-
+    
+    
 <div class="footer-grid first-row">
-
+    
     <div class="footer-col">
         <strong>{{ company.name }}</strong><br/>
 
@@ -16,7 +17,7 @@
         {{ 'Account Number'|trans }}: {{ company.account_number }}
       {% endif %}
     </div>
-
+  
     <div class="footer-col">
         <ul class="footer-links" aria-label="Footer links">
             {% for i in 1..5 %}
@@ -28,9 +29,9 @@
               {% endif %}
             {% endfor %}
           </ul>
-
+          
     </div>
-
+  
     <div class="footer-col">
         <ul class="footer-links" aria-label="Social media links">
             {% for i in 1..5 %}
@@ -47,7 +48,7 @@
     {% endif %}
   {% endfor %}
 </ul>
-
+          
     </div>
   </div>
 

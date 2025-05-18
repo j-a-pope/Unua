@@ -1,0 +1,93 @@
+<nav id="main-nav" class="nav-container" aria-label="Main navigation">
+    <div class="container">
+
+           <button id="menu-toggle" class="menu-toggle" aria-label="Toggle navigation">
+            <i class="fa fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="nav-links">
+            <ul>
+                {% if settings.side_menu_dashboard %}
+                    <li class="nav-item {% if request._url == '/' %}active{% endif %}">
+                        <a href="{{ '/'|link }}">
+                            <i class="fa fa-home"></i> {{ 'Dashboard'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% set is_order = request._url starts with '/order' %}
+{% set is_service = request._url starts with '/order/service' %}
+
+{% if settings.side_menu_order %}
+    <li class="nav-item {% if is_order and not is_service %}active{% endif %}">
+        <a href="{{ '/order'|link }}">
+            <i class="fa fa-shopping-cart"></i> {{ 'Order'|trans }}
+        </a>
+    </li>
+{% endif %}
+
+
+{% set is_support = request._url starts with '/support' %}
+{% set is_kb = request._url starts with '/support/kb' %}
+
+
+                {% if settings.side_menu_support %}
+                    <li class="nav-item {% if is_support and not is_kb %}active{% endif %}">
+                        <a href="{{ '/support'|link }}">
+                            <i class="fa fa-life-ring"></i> {{ 'Support'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if settings.side_menu_services %}
+                    <li class="nav-item {% if request._url starts with '/order/service' %}active{% endif %}">
+                        <a href="{{ '/order/service'|link }}">
+                            <i class="fa fa-box"></i> {{ 'Services'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if settings.side_menu_invoices %}
+                    <li class="nav-item {% if request._url starts with '/invoice' %}active{% endif %}">
+                        <a href="{{ '/invoice'|link }}">
+                            <i class="fa fa-file-invoice-dollar"></i> {{ 'Invoices'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if settings.side_menu_emails %}
+                    <li class="nav-item {% if request._url starts with '/email' %}active{% endif %}">
+                        <a href="{{ '/email'|link }}">
+                            <i class="fa fa-envelope"></i> {{ 'Email'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if settings.side_menu_payments %}
+                    <li class="nav-item {% if request._url starts with '/client/balance' %}active{% endif %}">
+                        <a href="{{ '/client/balance'|link }}">
+                            <i class="fa fa-wallet"></i> {{ 'Wallet'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if guest.extension_is_on({"mod":"news"}) and settings.side_menu_news %}
+                    <li class="nav-item {% if request._url starts with '/news' %}active{% endif %}">
+                        <a href="{{ '/news'|link }}">
+                            <i class="fa fa-newspaper"></i> {{ 'News'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% if guest.support_kb_enabled() and settings.side_menu_kb %}
+                    <li class="nav-item {% if request._url starts with '/support/kb' %}active{% endif %}">
+                        <a href="{{ 'support/kb'|link }}">
+                            <i class="fa fa-book-open"></i> {{ 'Knowledge Base'|trans }}
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <div class="gradient-divider" role="separator" aria-hidden="true"></div>
+</nav>

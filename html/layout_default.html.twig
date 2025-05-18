@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->
+<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->    
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +20,7 @@
     <meta name="robots" content="{{ settings.meta_robots }}">
     <meta name="author" content="{{ settings.meta_author }}">
     <meta name="generator" content="FOSSBilling">
-
+    
     <!-- No opengraph or other social media meta tags. Thinking about whether to add them or not -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
@@ -29,22 +29,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arimo&amp;family=Inter&amp;family=Montserrat&amp;display=swap" rel="stylesheet">
     <!-- TODO - Use local fonts instead of calling from Google -->
-
+    
     <link rel="shortcut icon" href="{{ guest.system_company.favicon_url }}">
     <!-- TODO - Review current favicon best practices, multiple sizes for better device support, etc. -->
-
+    
     {{ "Api/API.js" | library_url | script_tag }}
-
+    {{ encore_entry_script_tags('huraga') }}
     <link rel='stylesheet' type='text/css' href="{{ 'scss/unua.scss' | asset_url }}">
-    <script src="{{ 'unua.js' | asset_url }}"></script> <!--Defer maybe?-->
-
+    
+    
     {{ DebugBar_renderHead() }}
 
     {% block head %}{% endblock %}
     {% block js %}{% endblock %}
 
 
-
+ 
 <style>
 :root {
     --bg: {{ settings.theme_bg|default('hsl(0, 0%, 97%)') }};
@@ -64,10 +64,21 @@
 
     --font: {{ settings.font }}, sans-serif !important;
 }
-</style>
+</style>    
 </head>
 
 <body id="top" class="{% block body_class %}{% endblock %}">
+
+<script> /* Stop toasts from auto closing */
+document.addEventListener('shown.bs.toast', e => {
+  const toast = bootstrap.Toast.getInstance(e.target);
+  if (toast && toast._config) {
+    toast._config.autohide = false;
+  }
+});
+</script>
+
+
 
 <!-- TODO - Keyboard nav skip links -->
 
@@ -87,20 +98,17 @@
 {% set company = guest.system_company %}
 {% set logo_url =  company.logo_url %}
 
-
-
-
     {% include 'partial_header.html.twig' %}
 
     {% include 'partial_menu.html.twig' %}
 
-    <div class="gradient-divider" role="separator" aria-hidden="true"></div>
+    
 
     <main id="main-content" role="main">
         <div class="container">
 
             {% if settings.show_breadcrumb %}
-
+                                
                 {% block breadcrumbs %}
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb d-none d-md-flex">
@@ -131,6 +139,8 @@
         <a href="#top" class="btn btn-primary btn-top">{{ 'Top'|trans }}</a>
     {% endif %}
 
+     <div class="toast-container"></div>
+
     {% if guest.extension_is_on({ "mod": "cookieconsent" }) %}
         {% include 'mod_cookieconsent_index.html.twig' ignore missing %}
     {% endif %}
@@ -138,12 +148,73 @@
     {{ DebugBar_render() }}
 
     <!-- Yes, yes, scripts should be in unua.js. They will be moved in near future when this is tidied up -->
-    <script>
+    
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const parseHSL = (hsl) => {
+    const match = hsl.match(/^hsl\(\s*(\d+),\s*(\d+)%\s*,\s*(\d+)%\s*\)$/i);
+    return match ? {
+      h: parseInt(match[1], 10),
+      s: parseInt(match[2], 10),
+      l: parseInt(match[3], 10)
+    } : null;
+  };
+
+  const isLightColor = (hsl) => {
+    const parsed = parseHSL(hsl);
+    return parsed ? parsed.l > 60 : true; // Assume light if invalid
+  };
+
+  const bgDark = getComputedStyle(document.documentElement).getPropertyValue('--bg-dark').trim();
+  const text = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
+  const preferredText = isLightColor(bgDark) ? text : 'white';
+
+  document.documentElement.style.setProperty('--text-on-bg-dark', preferredText);
+});
+</script>
+
+
+
+
+
+<script> 
   document.addEventListener('scroll', function () {
     document.body.classList.toggle('scrolled', window.scrollY > 300);
+  }); 
+</script> 
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const toggle = document.getElementById('menu-toggle');
+    const nav = document.getElementById('nav-links');
+    toggle.addEventListener('click', () => {
+      nav.classList.toggle('open');
+    });
   });
 </script>
+
+<script>
+    const sections = document.querySelectorAll('section');
+    const navLinks = document.querySelectorAll('.profile-nav a');
+
+    function activateCurrentLink() {
+      let fromTop = window.scrollY + 100; // Offset for fixed nav spacing
+
+      sections.forEach(section => {
+        const id = section.getAttribute('id');
+        const link = document.querySelector(`.profile-nav a[href="#${id}"]`);
+        if (section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
+          navLinks.forEach(link => link.classList.remove('active'));
+          link.classList.add('active');
+        }
+      });
+    }
+
+    window.addEventListener('scroll', activateCurrentLink);
+  </script>
 
 
 </body>
     </html>
+

@@ -1,0 +1,301 @@
+{% extends request.ajax ? "layout_blank.html.twig" : "layout_default.html.twig" %}
+
+{% block meta_title %}{{ 'Profile details'|trans }}{% endblock %}
+{% block page_header %}{{ 'User profile settings'|trans }}{% endblock %}
+{% block breadcrumb %}
+    <li class="breadcrumb-item active" aria-current="page">{{ 'Profile'|trans }}</li>{% endblock %}
+
+{% block body_class %}client-profile{% endblock %}
+{% set required = guest.client_required %}
+{% block content %}
+    {% if (guest.client_is_email_validation_required) and (not profile.email_approved) %}
+        <div class="alert alert-block alert-danger">
+            <div class="row">
+                <span>{{ 'You must verify your email address before you may access our services.'|trans }}</span>
+            </div>
+            <a href="{{ 'api/client/client/resend_email_verification'|link({ 'CSRFToken': CSRFToken }) }}"
+               class="btn btn-primary api-link"
+               data-api-msg="{{ 'Verification email has been resent'|trans }}">{{ 'Resend verification email'|trans }}</a>
+        </div>
+    {% endif %}
+
+
+    <div class="profile-settings-layout">
+        <nav class="profile-nav">
+            <ul>
+                <li><a href="#details" class="active">Details</a></li>
+                <li><a href="#password">Password</a></li>
+                <li><a href="#apikey">API Key</a></li>
+                <li><a href="#currency">Currency</a></li>
+            </ul>
+        </nav>   
+
+        <main class="profile-content">
+            <section id="details" class="card">
+                <div class="card-header">
+                    <h2 class="card-title">{{ 'Update details'|trans }}</h2>                 
+                    <p class="">{{ 'Keep your personal data up to date.'|trans }}</p>
+                </div>
+
+                <div class="card-body">
+   
+
+
+<form method="post" action="/client/profile/update" class="api-form">
+  <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}">
+
+  <fieldset>
+    <legend>Avatar</legend>
+    <div class="form-row" style="align-items: center;">
+      <div class="form-group" style="flex: 0 0 auto;">
+        <img src="{{ profile.email|gravatar(80) }}" alt="Gravatar" class="img-thumbnail" style="width: 80px; height: 80px; border-radius: 0.5rem;">
+      </div>
+      <div class="form-group" style="margin-left: 1rem;">
+        <p style="margin: 0;">{{ 'To change your avatar visit'|trans }} <a href="https://gravatar.com" target="_blank">Gravatar</a>.</p>
+      </div>
+    </div>
+  </fieldset>
+
+  {% set required = guest.client_required %}
+
+  <fieldset>
+    <legend>Personal Information</legend>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="first_name">First Name<span class="required-marker">*</span></label>
+        <input type="text" id="first_name" name="first_name" value="{{ profile.first_name }}" required>
+      </div>
+      <div class="form-group">
+        <label for="last_name">Last Name{% if 'last_name' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="last_name" name="last_name" value="{{ profile.last_name }}" {% if 'last_name' in required %}required{% endif %}>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="email">Email Address<span class="required-marker">*</span></label>
+        <input type="email" id="email" name="email" value="{{ profile.email }}" required>
+      </div>
+      <div class="form-group">
+        <label for="birthday">Birthdate{% if 'birthday' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="date" id="birthday" name="birthday" value="{{ profile.birthday }}" {% if 'birthday' in required %}required{% endif %}>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="gender">Gender{% if 'gender' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <select name="gender" id="gender" {% if 'gender' in required %}required{% endif %}>
+          <option value="male" {{ profile.gender == 'male' ? 'selected' : '' }}>Male</option>
+          <option value="female" {{ profile.gender == 'female' ? 'selected' : '' }}>Female</option>
+          <option value="nonbinary" {{ profile.gender == 'nonbinary' ? 'selected' : '' }}>Non-binary</option>
+          <option value="other" {% if profile.gender not in ['male', 'female', 'nonbinary'] %}selected{% endif %}>Other</option>
+        </select>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Company Information</legend>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="company">Company Name{% if 'company' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="company" name="company" value="{{ profile.company }}" {% if 'company' in required %}required{% endif %}>
+      </div>
+      <div class="form-group">
+        <label for="company_vat">Company VAT{% if 'company_vat' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="company_vat" name="company_vat" value="{{ profile.company_vat }}">
+      </div>
+      <div class="form-group">
+        <label for="company_number">Company Number{% if 'company_number' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="company_number" name="company_number" value="{{ profile.company_number }}">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Contact</legend>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="phone_cc">Country Code{% if 'phone_cc' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="phone_cc" name="phone_cc" value="{{ profile.phone_cc }}" {% if 'phone' in required %}required{% endif %}>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone{% if 'phone' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="phone" name="phone" value="{{ profile.phone }}" {% if 'phone' in required %}required{% endif %}>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Address</legend>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="address_1">Address 1{% if 'address_1' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="address_1" name="address_1" value="{{ profile.address_1 }}" {% if 'address_1' in required %}required{% endif %}>
+      </div>
+      <div class="form-group">
+        <label for="address_2">Address 2{% if 'address_2' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="address_2" name="address_2" value="{{ profile.address_2 }}" {% if 'address_2' in required %}required{% endif %}>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="city">City{% if 'city' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="city" name="city" value="{{ profile.city }}" {% if 'city' in required %}required{% endif %}>
+      </div>
+      <div class="form-group">
+        <label for="state">State{% if 'state' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="state" name="state" value="{{ profile.state }}" {% if 'state' in required %}required{% endif %}>
+      </div>
+      <div class="form-group">
+        <label for="postcode">Postcode{% if 'postcode' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="postcode" name="postcode" value="{{ profile.postcode }}" {% if 'postcode' in required %}required{% endif %}>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="country">Country{% if 'country' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <select id="country" name="country" {% if 'country' in required %}required{% endif %}>
+          {% for val,label in guest.system_countries %}
+            <option value="{{ val }}" {% if val == profile.country %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Identification</legend>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="document_nr">Passport number{% if 'document_nr' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <input type="text" id="document_nr" name="document_nr" value="{{ profile.document_nr }}">
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Custom Fields</legend>
+    {% for i in 1..10 %}
+      {% set custom = 'custom_' ~ i %}
+      {% set current = guest.client_custom_fields[custom] ?? {} %}
+      {% if current.active and current.title is defined and current.title is not iterable %}
+        <div class="form-row">
+          <div class="form-group">
+            <label for="{{ custom }}">{{ current.title|trans }}{% if current.required %}<span class="required-marker">*</span>{% endif %}</label>
+            <input type="text" id="{{ custom }}" name="{{ custom }}" value="{{ profile[custom]|e }}" {% if current.required %}required{% endif %}>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  </fieldset>
+
+  <button class="btn btn-primary" type="submit">Update Profile</button>
+</form>
+
+                   </div>
+            </section>
+
+            <section id="password" class="card">
+                <div class="card-header">    
+                <h2 class="card-title mb-1">{{ 'Change Password'|trans }}</h2>
+                
+                </div>
+                <div class="card-body">
+                <p>{{ 'Please enter new password two times in order avoid mistypes'|trans }}</p>
+                <form method="post" action="{{ 'api/client/profile/change_password'|link }}" class="api-form">
+  <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}">
+
+  <fieldset>
+    <legend>{{ 'Change Password'|trans }}</legend>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="current_password">{{ 'Current Password'|trans }} <span class="required-marker">*</span></label>
+        <input type="password" id="current_password" name="current_password" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label for="new_password">{{ 'New Password'|trans }} <span class="required-marker">*</span></label>
+        <input type="password" id="new_password" name="new_password" required>
+      </div>
+      <div class="form-group">
+        <label for="confirm_password">{{ 'Confirm Password'|trans }} <span class="required-marker">*</span></label>
+        <input type="password" id="confirm_password" name="confirm_password" required>
+      </div>
+    </div>
+  </fieldset>
+
+  <button class="btn btn-primary" type="submit">{{ 'Change Password'|trans }}</button>
+</form>
+                </div>
+            </section>
+            
+            <section id="apikey" class="card">
+                <div class="card-header">
+                <h2 class="card-title">{{ 'API Key'|trans }}</h2>
+                
+                </div>
+                <div class="card-body">
+                <p>{{ 'API key allows integration with external applications. You will need this key for authentication.'|trans }}</p>
+                
+                
+
+
+
+                  <form class="api-form" method="post" action="client/profile/api_key_reset" id="change-api-key" data-api-msg="API key was changed">
+  <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}" />
+
+  <fieldset>
+    <legend>{{ 'API Key Management'|trans }}</legend>
+
+    <div class="form-row" style="align-items: flex-end; gap: 0.5rem;">
+  <div class="form-group" style="flex: 1;">
+    <label for="api-key">{{ 'Your API key'|trans }}</label>
+    <input type="text" id="api-key" name="api_key" value="{{ client.profile_api_key_get ?? '' }}" readonly placeholder="{{ 'No API key generated yet'|trans }}">
+  </div>
+  <div class="form-group" style="flex: 0 0 auto;">
+    <button type="button" class="btn btn-secondary" onclick="navigator.clipboard.writeText(document.getElementById('api-key').value)" title="Copy API Key">
+      <i class="fa fa-copy" aria-hidden="true"></i>
+    </button>
+  </div>
+</div>
+  </fieldset>
+
+  <button class="btn btn-primary" type="submit">{{ 'Generate a new key'|trans }}</button>
+</form>
+
+
+                </div>
+            </section>
+
+            <section id="currency" class="card">
+                <div class="card-header">
+                    
+                <h2 class="card-title">{{ 'Currency'|trans }}</h2>
+                
+                </div>
+                <div class="card-body">
+                  
+                  <p>{{ 'Your profile currency is defined after your first order. Once your currency is set, all your profile accounting will be managed in that currency and cannot be changed.'|trans }}</p>
+                  {% if profile.currency %}
+                    <p>{{ 'Your profile currency is'|trans }} <strong>{{ profile.currency }}</strong></p>
+                    <p>{{ 'Create new client profile if you want to manage your money in other currency.'|trans }}</p>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        {{ 'You do not yet have a currency associated with your profile. You can select the correct one when making your first order.'|trans }}
+                    </div>
+                {% endif %}
+                </div>
+            </section>
+        </main>
+
+
+    </div>
+    
+    
+    
+{% endblock %}
