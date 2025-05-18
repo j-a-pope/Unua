@@ -1,43 +1,53 @@
 
 *, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  html, body {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    height: auto;
-    min-height: 100%;
-    overflow: visible;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: auto;
+  min-height: 100%;
+  overflow: visible;
 }
 
 html {
-    scroll-behavior: smooth;
+  scroll-behavior: smooth;
 }
 
 body {
-    background: var(--bg);
-    font-family: var(--font);
+  background: var(--bg);
+  font-family: var(--font);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
+
+main {
+  flex: 1; /* Pushes the footer to the bottom even if main doesn't have much content */
+}
+
+
+
 a {
-    color: var(--highlight);
-    text-decoration: none;
+  color: var(--highlight);
+  text-decoration: none;
 }
 
 a:hover {color: var(--highlight-dark);}
 
 header a {
-    color: var(--text);
+  color: var(--text);
 }
 
 header, main, footer {
-    padding-top: 1.5rem;
-    padding-bottom: 1.5rem;
-    /* shorthand the padding values once finalised */
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  /* shorthand the padding values once finalised */
 }
 
 .container {
@@ -49,12 +59,12 @@ header, main, footer {
 
 .gradient-divider {
   height: 1px; /* Pick a value John dammit */
-  background: linear-gradient(to right, 
-  var(--bg-dark) 0%, 
-  var(--accent-dark) 8%, 
-  var(--accent-dark) 30%, 
-  var(--bg-dark) 90%, 
-  var(--accent-dark) 100%);
+  background: linear-gradient(to right,
+                              var(--bg-dark) 0%,
+                              var(--accent-dark) 8%,
+                              var(--accent-dark) 30%,
+                              var(--bg-dark) 90%,
+                              var(--accent-dark) 100%);
   margin: 0;
   border: none;
 }
@@ -72,48 +82,48 @@ header {
 }
 
 #header-controls {
-    font-size: .9rem;
+font-size: .9rem;
 }
 
 .header-controls-menu {
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
 }
 
 .header-controls-menu li {
-    list-style: none;
+  list-style: none;
 }
 
 
 
 .alert, .card-header, .card-body {
-    padding: 10px;
+  padding: 10px;
 }
 
 .card {
-    background: var(--bg-light);
-    box-shadow: 1px 1px 2px 1px var(--bg-dark);
-    border: 1px solid var(--bg-dark);
-    border-radius: 3px;
+  background: var(--bg-light);
+  box-shadow: 1px 1px 2px 1px var(--bg-dark);
+  border: 1px solid var(--bg-dark);
+  border-radius: 3px;
 }
 
 .card-header {
-    background: var(--accent-light);
-    border-bottom: 1px solid var(--accent-dark);
-    color: var(--text);
-    border-radius: 3px 3px 0 0;
-    display: flex;
+  background: var(--accent-light);
+  border-bottom: 1px solid var(--accent-dark);
+  color: var(--text);
+  border-radius: 3px 3px 0 0;
+  display: flex;
   justify-content: space-between;
   align-content: center;
 }
 
 .card-title {
-  font-size: 1.125rem; 
+  font-size: 1.125rem;
   font-weight: 500;
   margin: 0;
   margin-top: .5rem;
-  
+
 }
 
 
@@ -124,9 +134,9 @@ header {
 }
 
 .card-body {
-    background: var(--bg-light);
-    color: var(--text);
-    border-radius: 0 0 3px 3px;
+  background: var(--bg-light);
+  color: var(--text);
+  border-radius: 0 0 3px 3px;
 }
 
 .card-body hr {
@@ -161,24 +171,24 @@ header {
 
 
 
-  .dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  
-    @media (min-width: 1024px) {
-      grid-template-columns: repeat(3, 1fr);
-    }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
   }
+}
 
 footer {
-    background: var(--bg-dark);
-    padding-top: 0;
-    color: var(--text-on-bg-dark);
+  background: var(--bg-dark);
+  padding-top: 0;
+  color: var(--text-on-bg-dark);
 }
 
 footer ul {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 .footer-grid {
@@ -189,202 +199,205 @@ footer ul {
 }
 
 .footer-grid.first-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: .5rem;
-    margin-bottom: 1rem;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: .5rem;
+  margin-bottom: 1rem;
+}
 
-  .footer-grid.first-row .footer-col:not(:first-child) {
-    border-left: 2px solid var(--accent-dark);
-    padding-left: 10px;
-  }
-  
+.footer-grid.first-row .footer-col:not(:first-child) {
+  border-left: 2px solid var(--accent-dark);
+  padding-left: 10px;
+}
+
+.footer-grid.second-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  font-size: 0.9rem;
+  border-top: 2px solid var(--accent-dark); /* Horizontal line */
+  padding-top: .5rem; /* Space between line and content */
+  margin-top: 1rem;
+}
+
+.footer-col {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.footer-grid.second-row > div:nth-child(1) {
+  text-align: left;
+}
+
+.footer-grid.second-row > div:nth-child(2) {
+  text-align: right;
+}
+
+@media (max-width: 768px) {
   .footer-grid.second-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    align-items: center;
-    font-size: 0.9rem;
-    border-top: 2px solid var(--accent-dark); /* Horizontal line */
-    padding-top: .5rem; /* Space between line and content */
-    margin-top: 1rem;
+    grid-template-columns: 1fr;
+    text-align: center;
   }
-
-  .footer-col {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-  
-  .footer-grid.second-row > div:nth-child(1) {
-    text-align: left;
-  }
-  
-  .footer-grid.second-row > div:nth-child(2) {
-    text-align: right;
-  }
-  
-  @media (max-width: 768px) {
-    .footer-grid.second-row {
-      grid-template-columns: 1fr;
-      text-align: center;
-    }
-  }
+}
 
 
 .footer-grid i.fab {
-    font-size: 1rem;
+  font-size: 1rem;
   padding-right: .5rem;
 }
 
 
 .footer-link {
-    color: var(--text);
-    text-decoration: none;
-  }
-  
-  .footer-link:hover {
-    color: var(--highlight);
-  }
-  
+  color: var(--text);
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: var(--highlight);
+}
+
 
 .btn {
-    padding: 5px;
-    border: 1px solid var(--text);
-    color: var(--text);
-    border-radius: 2px;
-  }
+  padding: 5px;
+  border: 1px solid var(--text);
+  color: var(--text);
+  border-radius: 2px;
+}
 
 .btn-dark {
-    background: var(--highlight-dark);
-  }
-  
-  
-  
-  .btn-primary {
-      background: var(--highlight);
-  }
-  
-  .btn-primary:hover {
-      background: var(--highlight-light);
-  }
+  background: var(--highlight-dark);
+}
 
-  .btn-dismiss {
-    position: absolute;
-    top: .5rem;
-    right: .5rem;
-  }
-  
+
+
+.btn-primary {
+  background: var(--highlight);
+}
+
+.btn-primary:hover {
+  background: var(--highlight-light);
+}
+
+.btn-dismiss {
+  position: absolute;
+  top: .75rem;
+  right: .75rem;
+  font-size: 1.25rem;
+  color: var(--text-muted);
+  border: 0;
+}
+
 .alert {
   border-radius: 3px;
   position: relative;
 }
 
 .alert.alert-info {
-    background: var(--accent-light);
-    border: 1px solid var(--text);
-    color: var(--text);
-    margin-bottom: 1.5rem;
-    border-left: 6px solid var(--accent-dark);
+  background: var(--accent-light);
+  border: 1px solid var(--text);
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  border-left: 6px solid var(--accent-dark);
 }
-  
 
 
-  .dropdown {
-    position: relative;
 
-    .dropdown-toggle {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        cursor: pointer;
+.dropdown {
+  position: relative;
+
+  .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+  }
+
+  .avatar {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+  }
+
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--bg-light);
+    border: 1px solid var(--accent-dark);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    list-style: none;
+    padding: 0.5rem 0;
+    margin: 0;
+    display: none;
+    min-width: 160px;
+    z-index: 1000;
+
+    a {
+      display: block;
+      padding: 0.5rem 1rem;
+      color: var(--text);
+      text-decoration: none;
+
+      &:hover {
+        background-color: var(--accent-light);
+        color: var(--highlight);
+      }
     }
+  }
 
-    .avatar {
-        height: 30px;
-        width: 30px;
-        border-radius: 50%;
-    }
-
-    .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        background: var(--bg-light);
-        border: 1px solid var(--accent-dark);
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-        list-style: none;
-        padding: 0.5rem 0;
-        margin: 0;
-        display: none;
-        min-width: 160px;
-        z-index: 1000;
-
-        a {
-            display: block;
-            padding: 0.5rem 1rem;
-            color: var(--text);
-            text-decoration: none;
-
-            &:hover {
-                background-color: var(--accent-light);
-                color: var(--highlight);
-            }
-        }
-    }
-
-    &:hover .dropdown-menu {
-        display: block;
-    }
+  &:hover .dropdown-menu {
+    display: block;
+  }
 }
 
 .dropdown-toggle {
-    position: relative;
-    padding-right: 6px;
+  position: relative;
+  padding-right: 6px;
 
-    .caret {
-        display: inline-block;
-        margin-left: 6px;
-        width: 0;
-        height: 0;
-        vertical-align: middle;
-        border-left: 5px solid transparent;
-        border-right: 5px solid transparent;
-        border-top: 5px solid var(--text);
-    }
+  .caret {
+    display: inline-block;
+    margin-left: 6px;
+    width: 0;
+    height: 0;
+    vertical-align: middle;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid var(--text);
+  }
 }
 
 .dropdown:hover .caret {
-    transform: rotate(180deg);
-    transition: transform 0.2s ease;
+  transform: rotate(180deg);
+  transition: transform 0.2s ease;
 }
 
 .breadcrumb {
-    list-style: none;
-    display: flex;
-    margin-bottom: 1rem;
+  list-style: none;
+  display: flex;
+  margin-bottom: 1rem;
 }
 
 .breadcrumb li, .breadcrumb li a {
-    color: var(--text-muted);
+  color: var(--text-muted);
 }
 
 .breadcrumb .active {
-    color: var(--text);
+  color: var(--text);
 }
 
 .breadcrumb li + li::before {
-    content: "›"; /* Maybe a nicer separator */
-    margin: 0 0.5em;
-    color: var(--text-muted);
-  }
+  content: "›"; /* Maybe a nicer separator */
+  margin: 0 0.5em;
+  color: var(--text-muted);
+}
 
-  .btn-top {
-    position: fixed;
-    bottom: 3.5rem;
-    right: 1.5rem;
-  
-    opacity: 0;
+.btn-top {
+  position: fixed;
+  bottom: 3.5rem;
+  right: 1.5rem;
+
+  opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.3s ease;
@@ -539,11 +552,11 @@ body.scrolled .btn-top {
 /* ---- Main nav ---- */
 
 #main-nav {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-  background: var(--accent-light);
-  border-top: 1px solid var(--bg-dark);
+position: sticky;
+top: 0;
+z-index: 999;
+background: var(--accent-light);
+border-top: 1px solid var(--bg-dark);
 }
 
 .nav-container {
@@ -638,12 +651,12 @@ body.scrolled .btn-top {
   }
 
   .nav-links {
-  display: block;
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
-  transition: max-height 0.4s ease, opacity 0.3s ease;
-}
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+  }
 
   .nav-links.open {
     max-height: 1000px; /* enough to fit all items */
@@ -688,78 +701,78 @@ table tbody tr:nth-child(even) {
 
 /* Side nav for profile page (and others to follow) */
 
- .profile-settings-layout {
-      display: flex;
-      gap: 2rem;
-      padding: 2rem;
-      flex-wrap: wrap;
-    }
+.profile-settings-layout {
+  display: flex;
+  gap: 2rem;
+  padding: 2rem;
+  flex-wrap: wrap;
+}
 
-    .profile-nav {
-      flex: 0 0 200px;
-      position: -webkit-sticky;
-      position: sticky;
-      top: 4rem;
-      align-self: flex-start;
-      height: max-content;
-    }
+.profile-nav {
+  flex: 0 0 200px;
+  position: -webkit-sticky;
+  position: sticky;
+  top: 4rem;
+  align-self: flex-start;
+  height: max-content;
+}
 
-    .profile-nav ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
+.profile-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
 
-    .profile-nav li a {
-      display: block;
-      padding: 0.5rem 1rem;
-      border-radius: 0.5rem;
-      text-decoration: none;
-      color: var(--color-text-muted);
-      transition: background 0.2s, color 0.2s;
-    }
+.profile-nav li a {
+  display: block;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  transition: background 0.2s, color 0.2s;
+}
 
-    /*
-    .profile-nav li a:hover,
-    .profile-nav li a.active {
-      background: var(--highlight);
-      color: var(--color-text);
-    }
-    */
+/*
+ * .profile-nav li a:hover,
+ * .profile-nav li a.active {
+ *  background: var(--highlight);
+ *  color: var(--color-text);
+ * }
+ */
 
-    .profile-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
+.profile-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-    section {
-      padding: 0;
-    }
+section {
+  padding: 0;
+}
 
-    @media (max-width: 768px) {
-      .profile-settings-layout {
-        flex-direction: column;
-        gap: 1rem;
-      }
+@media (max-width: 768px) {
+  .profile-settings-layout {
+    flex-direction: column;
+    gap: 1rem;
+  }
 
-      .profile-nav {
-        position: static;
-      }
+  .profile-nav {
+    position: static;
+  }
 
-      .profile-nav ul {
-        flex-direction: row;
-        overflow-x: auto;
-        background: var(--color-surface);
-        padding: 0.5rem 1rem;
-        border-bottom: 1px solid var(--color-border);
-        gap: 1rem;
-      }
-    }
+  .profile-nav ul {
+    flex-direction: row;
+    overflow-x: auto;
+    background: var(--color-surface);
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+    gap: 1rem;
+  }
+}
 
 .profile-nav li a {
   position: relative;
@@ -799,30 +812,30 @@ table tbody tr:nth-child(even) {
 
 
 /*
+ *
+ a { *
+ position: relative;
+ display: inline-block;
+ padding: 0.25rem 0;
+ transition: color 0.25s;
+ }
 
-a {
-    position: relative;
-    display: inline-block;
-    padding: 0.25rem 0;
-    transition: color 0.25s;
-}
+ a::after {
+ content: "";
+ position: absolute;
+ bottom: 0;
+ left: 0;
+ width: 0%;
+ height: 2px;
+ background: var(--highlight-dark);
+ transition: width 0.25s ease;
+ }
 
-a::after {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background: var(--highlight-dark);
-    transition: width 0.25s ease;
-}
+ a:hover::after {
+ width: 100%;
+ }
 
-a:hover::after {
-  width: 100%;
-}
-
-*/
+ */
 
 
 /* Profile Form Styling */
@@ -906,7 +919,7 @@ p {
   bottom: 1.5rem;
   right: 1.5rem;
   z-index: 1050;
-  
+
   display: flex;
   flex-direction: column;
   gap: .5em;
@@ -941,34 +954,16 @@ p {
 
 .toast .btn-close::before {
   font-family: "Font Awesome 6 Free";
-  content: "\f057"; 
+  content: "\f057";
   font-weight: 900;
 }
 
 
 
-html, body {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-main {
-  flex: 1; /* Take up all available space */
-}
-
-
-
 /* Temporary things added to take care of old module
-   templates that I will probably override in future. */
+ t*emplates that I will probably override in future. */
 
-   .news-index svg, .order-index svg {
-    height: 1rem;
-    vertical-align: bottom;
-   }
+.news-index svg, .order-index svg {
+  height: 1rem;
+  vertical-align: bottom;
+}
