@@ -136,8 +136,12 @@ document.addEventListener('shown.bs.toast', e => {
 
 
     {% if settings.footer_to_top_enabled %}
-        <a href="#top" class="btn btn-primary btn-top">{{ 'Top'|trans }}</a>
+        <a href="#top" class="btn btn-primary btn-top"><i class="fa fa-arrow-up me-1" aria-hidden="true"></i> {{ 'Top'|trans }}</a>
     {% endif %}
+
+
+
+
 
      <div class="toast-container"></div>
 

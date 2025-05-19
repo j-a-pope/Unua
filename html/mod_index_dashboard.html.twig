@@ -71,15 +71,15 @@ if (alertEl) {
     {% if tickets.total > 0 %}
         <div id="ticket-alerts">
             {% for ticket in tickets.list %}
-                <div class="alert alert-info d-flex justify-content-between align-items-center ticket-alert"
+                <div class="alert alert-info ticket-alert"
                      id="ticket-alert-{{ ticket.id }}"
                      data-ticket-id="{{ ticket.id }}"
                      data-ticket-updated="{{ ticket.updated_at }}">
                     <span>
                         Ticket <strong>#{{ ticket.id }}</strong> was responded {{ ticket.updated_at|timeago }} {{ 'ago'|trans }}.
                     </span>
-                    <div class="d-flex align-items-center gap-2">
-                        <a href="{{ 'support/ticket'|link }}/{{ ticket.id }}" class="alert-link">{{ 'Reply'|trans }}</a>
+                    <div class="ticket-link">
+                        <a href="{{ 'support/ticket'|link }}/{{ ticket.id }}" class="alert-link">{{ 'Reply'|trans }} <i class="fa fa-reply"></i></a>
                         <button type="button"
         class="btn-dismiss"
         aria-label="Dismiss"

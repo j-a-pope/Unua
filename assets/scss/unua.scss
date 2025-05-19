@@ -31,23 +31,57 @@ main {
   flex: 1; /* Pushes the footer to the bottom even if main doesn't have much content */
 }
 
+h1 {
+  font-size: 1.5rem;
+}
 
+p {
+  margin-top: 1lh;
+  margin-bottom: 1lh
+}
 
 a {
-  color: var(--highlight);
+  color: var(--text);
   text-decoration: none;
+  transition: color 0.25s;
+  position: relative;
+  display: inline-block;
 }
 
 a:hover {color: var(--highlight-dark);}
 
-header a {
-  color: var(--text);
+a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: var(--highlight-dark);
+  transition: width 0.25s ease;
 }
+
+a:hover::after {
+  width: 100%;
+}
+
+/*
+ *
+ * a {
+ *    position: relative;
+ *    display: inline-block;
+ *    padding: 0.25rem 0;
+ *    transition: color 0.25s;
+ * }
+ *
+ *
+ *
+ */
 
 header, main, footer {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-  /* shorthand the padding values once finalised */
+  /* shorthand the padding values once finalised (not just here but all over the place) */
 }
 
 .container {
@@ -71,6 +105,10 @@ header, main, footer {
 
 header {
   padding-top: 1rem;
+}
+
+.header-logo a::after {
+  width: 0;
 }
 
 .header-flex {
@@ -182,7 +220,7 @@ font-size: .9rem;
 }
 
 footer {
-  background: var(--bg-dark);
+  background: var(--bg-light);
   padding-top: 0;
   color: var(--text-on-bg-dark);
 }
@@ -216,8 +254,8 @@ footer ul {
   gap: 1rem;
   align-items: center;
   font-size: 0.9rem;
-  border-top: 2px solid var(--accent-dark); /* Horizontal line */
-  padding-top: .5rem; /* Space between line and content */
+  border-top: 2px solid var(--accent-dark);
+  padding-top: .5rem;
   margin-top: 1rem;
 }
 
@@ -247,19 +285,13 @@ footer ul {
   padding-right: .5rem;
 }
 
-
-.footer-link {
-  color: var(--text);
-  text-decoration: none;
-}
-
-.footer-link:hover {
-  color: var(--highlight);
+footer .gradient-divider {
+  height: 2px;
 }
 
 
 .btn {
-  padding: 5px;
+  padding: .5rem;
   border: 1px solid var(--text);
   color: var(--text);
   border-radius: 2px;
@@ -281,7 +313,7 @@ footer ul {
 
 .btn-dismiss {
   position: absolute;
-  top: .75rem;
+  top: .25rem;
   right: .75rem;
   font-size: 1.25rem;
   color: var(--text-muted);
@@ -299,6 +331,11 @@ footer ul {
   color: var(--text);
   margin-bottom: 1.5rem;
   border-left: 6px solid var(--accent-dark);
+}
+
+.ticket-link {
+  display: inline-block;
+  margin-left: 1rem;
 }
 
 .ticket-alert,
@@ -712,6 +749,7 @@ table tbody tr:nth-child(even) {
 
 
 /* Side nav for profile page (and others to follow) */
+/* TODO - Rename these to something more generic and globally appliable */
 
 .profile-settings-layout {
   display: flex;
@@ -814,40 +852,15 @@ section {
 
   &:hover,
   &.active {
-    font-weight: 600;
     color: var(--highlight-dark);
+  }
+
+  &:active {
+    font-weight: 600;
   }
 }
 
 
-
-
-
-/*
- *
- * a {
- *    position: relative;
- *    display: inline-block;
- *    padding: 0.25rem 0;
- *    transition: color 0.25s;
- * }
- *
- * a::after {
- *    content: "";
- *    position: absolute;
- *    bottom: 0;
- *    left: 0;
- *    width: 0%;
- *    height: 2px;
- *    background: var(--highlight-dark);
- *    transition: width 0.25s ease;
- * }
- *
- * a:hover::after {
- *  width: 100%;
- * }
- *
- */
 
 
 /* Profile Form Styling */
@@ -919,10 +932,7 @@ legend {
 }
 
 
-p {
-  margin-top: 1lh;
-  margin-bottom: 1lh
-}
+
 
 
 
@@ -980,7 +990,17 @@ p {
   vertical-align: bottom;
 }
 
-/* Quick hacky temp styles for login page */
+.card-header .small.text-muted {
+  padding-top: .5rem;
+  display: inline-block;
+}
+
+.card-header h5 {
+  font-size: 1.5rem;
+}
+
+/* Quick hacky temp styles for login page
+ *   Many repeated styles from other places, need to sort. */
 
 .page-login, .page-password-reset, .page-signup {
 
@@ -1023,6 +1043,17 @@ p {
   }
 
   .card .row .col a {
+    width: 100%;
+  }
+
+  input {
+    padding: 0.5rem;
+    border: 1px solid var(--text-muted);
+    border-radius: 3px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
     width: 100%;
   }
 }
