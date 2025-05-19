@@ -48,7 +48,11 @@
 
             function dismissShowcase(version) {
                 localStorage.setItem(versionKey, version);
-                document.getElementById('showcase-alert').style.display = 'none';
+const alertEl = document.getElementById('showcase-alert');
+if (alertEl) {
+  alertEl.classList.add('dismissed');
+  setTimeout(() => alertEl.style.display = 'none', 300);
+}
             }
         </script>
         <!-- Yes, yes, the script will be moved to the .js file in assets when I am happy with it.-->
@@ -103,8 +107,12 @@
             }
 
             function dismissTicketAlert(ticketId, updatedAt) {
-                const el = document.getElementById(`ticket-alert-${ticketId}`);
-                if (el) el.style.display = 'none';
+                const alertEl = document.getElementById(`ticket-alert-${ticketId}`);
+if (alertEl) {
+  alertEl.classList.add('dismissed');
+  setTimeout(() => alertEl.style.display = 'none', 300);
+}
+
 
                 const dismissed = getDismissedTickets();
                 dismissed[ticketId] = updatedAt;

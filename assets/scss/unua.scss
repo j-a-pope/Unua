@@ -301,7 +301,19 @@ footer ul {
   border-left: 6px solid var(--accent-dark);
 }
 
+.ticket-alert,
+#showcase-alert {
+transition: opacity 0.3s ease, transform 0.3s ease;
+opacity: 1;
+transform: translateY(0);
+}
 
+.ticket-alert.dismissed,
+#showcase-alert.dismissed {
+opacity: 0;
+transform: translateY(-0.5rem);
+pointer-events: none;
+}
 
 .dropdown {
   position: relative;
@@ -736,11 +748,11 @@ table tbody tr:nth-child(even) {
 }
 
 /*
- * .profile-nav li a:hover,
- * .profile-nav li a.active {
- *  background: var(--highlight);
- *  color: var(--color-text);
- * }
+ *    .profile-nav li a:hover,
+ *    .profile-nav li a.active {
+ *      background: var(--highlight);
+ *      color: var(--color-text);
+ *    }
  */
 
 .profile-content {
@@ -813,28 +825,28 @@ section {
 
 /*
  *
- a { *
- position: relative;
- display: inline-block;
- padding: 0.25rem 0;
- transition: color 0.25s;
- }
-
- a::after {
- content: "";
- position: absolute;
- bottom: 0;
- left: 0;
- width: 0%;
- height: 2px;
- background: var(--highlight-dark);
- transition: width 0.25s ease;
- }
-
- a:hover::after {
- width: 100%;
- }
-
+ * a {
+ *    position: relative;
+ *    display: inline-block;
+ *    padding: 0.25rem 0;
+ *    transition: color 0.25s;
+ * }
+ *
+ * a::after {
+ *    content: "";
+ *    position: absolute;
+ *    bottom: 0;
+ *    left: 0;
+ *    width: 0%;
+ *    height: 2px;
+ *    background: var(--highlight-dark);
+ *    transition: width 0.25s ease;
+ * }
+ *
+ * a:hover::after {
+ *  width: 100%;
+ * }
+ *
  */
 
 
@@ -961,9 +973,58 @@ p {
 
 
 /* Temporary things added to take care of old module
- t*emplates that I will probably override in future. */
+ *   templates that I will probably override in future. */
 
 .news-index svg, .order-index svg {
   height: 1rem;
   vertical-align: bottom;
 }
+
+/* Quick hacky temp styles for login page */
+
+.page-login, .page-password-reset, .page-signup {
+
+  .row {
+    max-width: 500px;
+    margin: 4rem auto;
+  }
+
+  .d-flex {
+    text-align: center;
+    padding-bottom: 1.5rem;
+  }
+
+  .card {
+    box-shadow: none;
+  }
+
+  .card-body {
+    border-radius: 3px;
+  }
+
+  .btn.btn-primary.w-100.mb-3 {
+    width: 100%;
+  }
+
+  .btn.btn-outline-primary {
+    background: var(--highlight);
+  }
+
+  .card .row {
+    margin: 1.5rem auto;
+    display: flex;
+    gap: 1.5rem;
+  }
+
+  .card .row .col {
+    display: flex;
+    width: 100%;
+    text-align: center;
+  }
+
+  .card .row .col a {
+    width: 100%;
+  }
+}
+
+

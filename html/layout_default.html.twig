@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->    
+<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,7 +20,7 @@
     <meta name="robots" content="{{ settings.meta_robots }}">
     <meta name="author" content="{{ settings.meta_author }}">
     <meta name="generator" content="FOSSBilling">
-    
+
     <!-- No opengraph or other social media meta tags. Thinking about whether to add them or not -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
@@ -29,22 +29,22 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Arimo&amp;family=Inter&amp;family=Montserrat&amp;display=swap" rel="stylesheet">
     <!-- TODO - Use local fonts instead of calling from Google -->
-    
+
     <link rel="shortcut icon" href="{{ guest.system_company.favicon_url }}">
     <!-- TODO - Review current favicon best practices, multiple sizes for better device support, etc. -->
-    
+
     {{ "Api/API.js" | library_url | script_tag }}
     {{ encore_entry_script_tags('huraga') }}
     <link rel='stylesheet' type='text/css' href="{{ 'scss/unua.scss' | asset_url }}">
-    
-    
+
+
     {{ DebugBar_renderHead() }}
 
     {% block head %}{% endblock %}
     {% block js %}{% endblock %}
 
 
- 
+
 <style>
 :root {
     --bg: {{ settings.theme_bg|default('hsl(0, 0%, 97%)') }};
@@ -64,7 +64,7 @@
 
     --font: {{ settings.font }}, sans-serif !important;
 }
-</style>    
+</style>
 </head>
 
 <body id="top" class="{% block body_class %}{% endblock %}">
@@ -102,13 +102,13 @@ document.addEventListener('shown.bs.toast', e => {
 
     {% include 'partial_menu.html.twig' %}
 
-    
+
 
     <main id="main-content" role="main">
         <div class="container">
 
             {% if settings.show_breadcrumb %}
-                                
+
                 {% block breadcrumbs %}
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb d-none d-md-flex">
@@ -148,7 +148,7 @@ document.addEventListener('shown.bs.toast', e => {
     {{ DebugBar_render() }}
 
     <!-- Yes, yes, scripts should be in unua.js. They will be moved in near future when this is tidied up -->
-    
+
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -178,11 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-<script> 
+<script>
   document.addEventListener('scroll', function () {
     document.body.classList.toggle('scrolled', window.scrollY > 300);
-  }); 
-</script> 
+  });
+</script>
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
@@ -214,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('scroll', activateCurrentLink);
   </script>
 
-
+{% endblock %}
 </body>
     </html>
-
