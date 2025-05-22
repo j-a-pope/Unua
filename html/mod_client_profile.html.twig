@@ -23,10 +23,10 @@
     <div class="profile-settings-layout">
         <nav class="profile-nav">
             <ul>
-                <li><a href="#details" class="active">Details</a></li>
-                <li><a href="#password">Password</a></li>
-                <li><a href="#apikey">API Key</a></li>
-                <li><a href="#currency">Currency</a></li>
+                <li><a href="#details" class="active">{{ 'Details'|trans }}</a></li>
+                <li><a href="#password">{{ 'Password'|trans }}</a></li>
+                <li><a href="#apikey">{{ 'API Key'|trans }}</a></li>
+                <li><a href="#currency">{{ 'Currency'|trans }}</a></li>
             </ul>
         </nav>   
 
@@ -41,7 +41,8 @@
    
 
 
-<form method="post" action="/client/profile/update" class="api-form">
+<form method="post" action="client/profile/update" class="api-form" data-api-msg="{{ 'Profile updated'|trans }}">
+
   <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}">
 
   <fieldset>
@@ -62,29 +63,29 @@
     <legend>Personal Information</legend>
     <div class="form-row">
       <div class="form-group">
-        <label for="first_name">First Name<span class="required-marker">*</span></label>
+        <label for="first_name">{{ 'First Name'|trans }}<span class="required-marker">*</span></label>
         <input type="text" id="first_name" name="first_name" value="{{ profile.first_name }}" required>
       </div>
       <div class="form-group">
-        <label for="last_name">Last Name{% if 'last_name' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <label for="last_name">{{ 'Last Name'|trans }}{% if 'last_name' in required %}<span class="required-marker">*</span>{% endif %}</label>
         <input type="text" id="last_name" name="last_name" value="{{ profile.last_name }}" {% if 'last_name' in required %}required{% endif %}>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="email">Email Address<span class="required-marker">*</span></label>
+        <label for="email">{{ 'Email Address'|trans }}<span class="required-marker">*</span></label>
         <input type="email" id="email" name="email" value="{{ profile.email }}" required>
       </div>
       <div class="form-group">
-        <label for="birthday">Birthdate{% if 'birthday' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <label for="birthday">{{ 'Birthdate'|trans }}{% if 'birthday' in required %}<span class="required-marker">*</span>{% endif %}</label>
         <input type="date" id="birthday" name="birthday" value="{{ profile.birthday }}" {% if 'birthday' in required %}required{% endif %}>
       </div>
     </div>
 
     <div class="form-row">
       <div class="form-group">
-        <label for="gender">Gender{% if 'gender' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <label for="gender">{{ 'Gender'|trans }}{% if 'gender' in required %}<span class="required-marker">*</span>{% endif %}</label>
         <select name="gender" id="gender" {% if 'gender' in required %}required{% endif %}>
           <option value="male" {{ profile.gender == 'male' ? 'selected' : '' }}>Male</option>
           <option value="female" {{ profile.gender == 'female' ? 'selected' : '' }}>Female</option>
@@ -96,18 +97,18 @@
   </fieldset>
 
   <fieldset>
-    <legend>Company Information</legend>
+    <legend>{{ 'Company Information'|trans }}</legend>
     <div class="form-row">
       <div class="form-group">
-        <label for="company">Company Name{% if 'company' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <label for="company">{{ 'Company Name'|trans }}{% if 'company' in required %}<span class="required-marker">*</span>{% endif %}</label>
         <input type="text" id="company" name="company" value="{{ profile.company }}" {% if 'company' in required %}required{% endif %}>
       </div>
       <div class="form-group">
-        <label for="company_vat">Company VAT{% if 'company_vat' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <label for="company_vat">{{ 'Company VAT'|trans }}{% if 'company_vat' in required %}<span class="required-marker">*</span>{% endif %}</label>
         <input type="text" id="company_vat" name="company_vat" value="{{ profile.company_vat }}">
       </div>
       <div class="form-group">
-        <label for="company_number">Company Number{% if 'company_number' in required %}<span class="required-marker">*</span>{% endif %}</label>
+        <label for="company_number">{{ 'Company Number'|trans }}{% if 'company_number' in required %}<span class="required-marker">*</span>{% endif %}</label>
         <input type="text" id="company_number" name="company_number" value="{{ profile.company_number }}">
       </div>
     </div>
@@ -193,7 +194,7 @@
     {% endfor %}
   </fieldset>
 
-  <button class="btn btn-primary" type="submit">Update Profile</button>
+  <button class="btn btn-primary" type="submit">{{ 'Update profile'|trans }}</button>
 </form>
 
                    </div>

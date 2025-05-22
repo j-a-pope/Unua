@@ -60,13 +60,13 @@
                 {% endif %}
 
                 {% if settings.main_nav_order %}
-                    <li class="nav-item {% if is_order and not is_service %}active{% endif %}">
+                    <li class="nav-item nav-order {% if is_order and not is_service %}active{% endif %}">
                         <a href="{{ '/order'|link }}">
                             <i class="fa fa-shopping-cart"></i> {{ 'Order'|trans }}
                         </a>
                     </li>
                 {% endif %}
-
+                
             </ul>
         </div>
     </div>

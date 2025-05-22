@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->
+<!-- TODO - Possibly change language based on locale or settings to improve RTL, etc. suppport -->    
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -20,65 +20,52 @@
     <meta name="robots" content="{{ settings.meta_robots }}">
     <meta name="author" content="{{ settings.meta_author }}">
     <meta name="generator" content="FOSSBilling">
-
     <!-- No opengraph or other social media meta tags. Thinking about whether to add them or not -->
+
+    <!-- TODO (maybe) - Font preloading -->
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" referrerpolicy="no-referrer" />
     <!-- Yes, it's font awesome, yes I plan to replace it with locally hosted icons -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Arimo&amp;family=Inter&amp;family=Montserrat&amp;display=swap" rel="stylesheet">
-    <!-- TODO - Use local fonts instead of calling from Google -->
-
+    
     <link rel="shortcut icon" href="{{ guest.system_company.favicon_url }}">
     <!-- TODO - Review current favicon best practices, multiple sizes for better device support, etc. -->
+    
+    <link rel="stylesheet" href="/themes/unua/assets/css/flag-icons.min.css">
+    <link rel='stylesheet' type='text/css' href="{{ 'scss/unua.scss' | asset_url }}">
+
 
     {{ "Api/API.js" | library_url | script_tag }}
     {{ encore_entry_script_tags('huraga') }}
-    <link rel='stylesheet' type='text/css' href="{{ 'scss/unua.scss' | asset_url }}">
-
+    <script src="{{ 'unua.js' | asset_url }}"></script> <!--Defer maybe?-->
 
     {{ DebugBar_renderHead() }}
 
     {% block head %}{% endblock %}
     {% block js %}{% endblock %}
 
+    <style>
+        :root {
+            --bg: {{ settings.theme_bg|default('hsl(0, 0%, 97%)') }};
+            --bg-light: {{ settings.theme_bg_light|default('hsl(0, 0%, 100%)') }};
+            --bg-dark: {{ settings.theme_bg_dark|default('hsl(0, 0%, 82%)') }};
 
+            --text: {{ settings.theme_text|default('hsl(0, 0%, 20%)') }};
+            --text-muted: {{ settings.theme_text_muted|default('hsl(0, 0%, 40%)') }};
 
-<style>
-:root {
-    --bg: {{ settings.theme_bg|default('hsl(0, 0%, 97%)') }};
-    --bg-light: {{ settings.theme_bg_light|default('hsl(0, 0%, 100%)') }};
-    --bg-dark: {{ settings.theme_bg_dark|default('hsl(0, 0%, 82%)') }};
+            --accent: {{ settings.theme_accent|default('hsl(340, 80%, 50%)') }};
+            --accent-light: {{ settings.theme_accent_light|default('hsl(340, 80%, 65%)') }};
+            --accent-dark: {{ settings.theme_accent_dark|default('hsl(340, 80%, 35%)') }};
 
-    --text: {{ settings.theme_text|default('hsl(0, 0%, 20%)') }};
-    --text-muted: {{ settings.theme_text_muted|default('hsl(0, 0%, 40%)') }};
+            --highlight: {{ settings.theme_highlight|default('hsl(50, 90%, 50%)') }};
+            --highlight-light: {{ settings.theme_highlight_light|default('hsl(50, 90%, 65%)') }};
+            --highlight-dark: {{ settings.theme_highlight_dark|default('hsl(50, 90%, 35%)') }};
 
-    --accent: {{ settings.theme_accent|default('hsl(340, 80%, 50%)') }};
-    --accent-light: {{ settings.theme_accent_light|default('hsl(340, 80%, 65%)') }};
-    --accent-dark: {{ settings.theme_accent_dark|default('hsl(340, 80%, 35%)') }};
-
-    --highlight: {{ settings.theme_highlight|default('hsl(50, 90%, 50%)') }};
-    --highlight-light: {{ settings.theme_highlight_light|default('hsl(50, 90%, 65%)') }};
-    --highlight-dark: {{ settings.theme_highlight_dark|default('hsl(50, 90%, 35%)') }};
-
-    --font: {{ settings.font }}, sans-serif !important;
-}
-</style>
+            --font: {{ settings.font }}, sans-serif !important;
+        }
+    </style>    
 </head>
 
 <body id="top" class="{% block body_class %}{% endblock %}">
-
-<script> /* Stop toasts from auto closing */
-document.addEventListener('shown.bs.toast', e => {
-  const toast = bootstrap.Toast.getInstance(e.target);
-  if (toast && toast._config) {
-    toast._config.autohide = false;
-  }
-});
-</script>
-
-
 
 <!-- TODO - Keyboard nav skip links -->
 
@@ -102,13 +89,13 @@ document.addEventListener('shown.bs.toast', e => {
 
     {% include 'partial_menu.html.twig' %}
 
-
+    
 
     <main id="main-content" role="main">
         <div class="container">
 
             {% if settings.show_breadcrumb %}
-
+                                
                 {% block breadcrumbs %}
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb d-none d-md-flex">
@@ -151,73 +138,7 @@ document.addEventListener('shown.bs.toast', e => {
 
     {{ DebugBar_render() }}
 
-    <!-- Yes, yes, scripts should be in unua.js. They will be moved in near future when this is tidied up -->
-
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const parseHSL = (hsl) => {
-    const match = hsl.match(/^hsl\(\s*(\d+),\s*(\d+)%\s*,\s*(\d+)%\s*\)$/i);
-    return match ? {
-      h: parseInt(match[1], 10),
-      s: parseInt(match[2], 10),
-      l: parseInt(match[3], 10)
-    } : null;
-  };
-
-  const isLightColor = (hsl) => {
-    const parsed = parseHSL(hsl);
-    return parsed ? parsed.l > 60 : true; // Assume light if invalid
-  };
-
-  const bgDark = getComputedStyle(document.documentElement).getPropertyValue('--bg-dark').trim();
-  const text = getComputedStyle(document.documentElement).getPropertyValue('--text').trim();
-  const preferredText = isLightColor(bgDark) ? text : 'white';
-
-  document.documentElement.style.setProperty('--text-on-bg-dark', preferredText);
-});
-</script>
-
-
-
-
-
-<script>
-  document.addEventListener('scroll', function () {
-    document.body.classList.toggle('scrolled', window.scrollY > 300);
-  });
-</script>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const toggle = document.getElementById('menu-toggle');
-    const nav = document.getElementById('nav-links');
-    toggle.addEventListener('click', () => {
-      nav.classList.toggle('open');
-    });
-  });
-</script>
-
-<script>
-    const sections = document.querySelectorAll('section');
-    const navLinks = document.querySelectorAll('.profile-nav a');
-
-    function activateCurrentLink() {
-      let fromTop = window.scrollY + 100; // Offset for fixed nav spacing
-
-      sections.forEach(section => {
-        const id = section.getAttribute('id');
-        const link = document.querySelector(`.profile-nav a[href="#${id}"]`);
-        if (section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
-          navLinks.forEach(link => link.classList.remove('active'));
-          link.classList.add('active');
-        }
-      });
-    }
-
-    window.addEventListener('scroll', activateCurrentLink);
-  </script>
-
-{% endblock %}
+   
+  {% endblock %}
 </body>
     </html>

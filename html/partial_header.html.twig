@@ -4,7 +4,7 @@
             <!-- TODO - Add logo size option to theme options -->
             {% if logo_url and settings.show_company_logo %}
                     <a href="{{ '/'|link }}">
-                        <img src="{{ logo_url }}" alt="{{ company.name }}" height="40px" title="{{ company.name }}">
+                        <img src="{{ logo_url }}" alt="{{ company.name }}" height="40px" title="{{ company.name }}">                        
                     </a>
                 {% else %}
                     <a href="{{ '/'|link }}">
@@ -15,18 +15,32 @@
 
         <div id="header-controls" aria-label="User options">
             <ul class="header-controls-menu">
-               <li class="languages">LANG</li>
+ 
+ {% set languages = guest.extension_languages(true) %}
+{% if languages|length > 1 %}
+  <li class="language-menu dropdown">
+    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fa fa-language" aria-hidden="true"></i>
+      {{ 'Language'|trans }}
+    </a>
+    <ul class="dropdown-menu">
+      {% for lang in languages %}
+  {% set parts = lang.locale|split('_') %}
+  {% set country = parts[1]|default('us')|lower %}
+  <li>
+    <a class="dropdown-item language_selector" href="#" data-locale="{{ lang.locale }}">
+      <span class="fi fi-{{ country }}"></span>
+      {{ lang.title|split(' (')[0] }}
+    </a>
+  </li>
+{% endfor %}
+    </ul>
+  </li>
+{% endif %}
 
-        <!--    {% set languages = guest.extension_languages(true) %}
-                    {% if languages|length > 1 %}
-                            <li class="nav-item">
-                                <select name="lang" class="form-select js-language-selector">
-                                    {% for lang in languages %}
-                                        <option value="{{ lang.locale }}" data-custom-properties="&lt;span class=&quot;fi fi-{{ lang.locale|split('_')[1]|lower }}&quot;&gt;&lt;/span&gt;">&nbsp;{{ lang.title }}</option>
-                                    {% endfor %}
-                                </select>
-                            </li>
-                    {% endif %}  -->
+
+
+                        
 
                 {% if settings.header_balance_enabled and client %}
                 <li>
@@ -43,7 +57,7 @@
                 </li>
                 {% endif %}
 
-
+                
 
                 {% if settings.top_menu_signout %}
                     {% if client %}
@@ -73,5 +87,5 @@
 
             </ul>
         </div>
-    </div>
+    </div>     
 </header>

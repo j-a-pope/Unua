@@ -377,7 +377,7 @@ document.addEventListener('DOMContentLoaded', () => {
         variants.push(
           { name: `${key}`, label: labels[0], value: toHSL(base) },
           { name: `${key}_light`, label: labels[1], value: toHSL({ ...base, l: Math.min(100, base.l + 15) }) },
-          { name: `${key}_dark`, label: labels[2], value: toHSL({ ...base, l: Math.max(0, base.l - 8) }) }
+          { name: `${key}_dark`, label: labels[2], value: toHSL({ ...base, l: Math.max(0, base.l - 30) }) }
         );
       } else if (key === 'text') {
         variants.push(
