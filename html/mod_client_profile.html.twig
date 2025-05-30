@@ -2,60 +2,51 @@
 
 {% block meta_title %}{{ 'Profile details'|trans }}{% endblock %}
 {% block page_header %}{{ 'User profile settings'|trans }}{% endblock %}
-{% block breadcrumb %}
-    <li class="breadcrumb-item active" aria-current="page">{{ 'Profile'|trans }}</li>{% endblock %}
+{% block breadcrumb %}<li class="breadcrumb-item active" aria-current="page">{{ 'Profile'|trans }}</li>{% endblock %}
 
 {% block body_class %}client-profile{% endblock %}
 {% set required = guest.client_required %}
 {% block content %}
-    {% if (guest.client_is_email_validation_required) and (not profile.email_approved) %}
-        <div class="alert alert-block alert-danger">
-            <div class="row">
-                <span>{{ 'You must verify your email address before you may access our services.'|trans }}</span>
-            </div>
-            <a href="{{ 'api/client/client/resend_email_verification'|link({ 'CSRFToken': CSRFToken }) }}"
-               class="btn btn-primary api-link"
-               data-api-msg="{{ 'Verification email has been resent'|trans }}">{{ 'Resend verification email'|trans }}</a>
-        </div>
-    {% endif %}
-
-
-    <div class="profile-settings-layout">
-        <nav class="profile-nav">
-            <ul>
-                <li><a href="#details" class="active">{{ 'Details'|trans }}</a></li>
-                <li><a href="#password">{{ 'Password'|trans }}</a></li>
-                <li><a href="#apikey">{{ 'API Key'|trans }}</a></li>
-                <li><a href="#currency">{{ 'Currency'|trans }}</a></li>
-            </ul>
-        </nav>   
-
-        <main class="profile-content">
-            <section id="details" class="card">
-                <div class="card-header">
-                    <h2 class="card-title">{{ 'Update details'|trans }}</h2>                 
-                    <p class="">{{ 'Keep your personal data up to date.'|trans }}</p>
-                </div>
-
-                <div class="card-body">
-   
-
-
-<form method="post" action="client/profile/update" class="api-form" data-api-msg="{{ 'Profile updated'|trans }}">
-
-  <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}">
-
-  <fieldset>
-    <legend>Avatar</legend>
-    <div class="form-row" style="align-items: center;">
-      <div class="form-group" style="flex: 0 0 auto;">
-        <img src="{{ profile.email|gravatar(80) }}" alt="Gravatar" class="img-thumbnail" style="width: 80px; height: 80px; border-radius: 0.5rem;">
+  {% if (guest.client_is_email_validation_required) and (not profile.email_approved) %}
+    <div class="alert alert-block alert-danger">
+      <div class="row">
+        <span>{{ 'You must verify your email address before you may access our services.'|trans }}</span>
       </div>
-      <div class="form-group" style="margin-left: 1rem;">
-        <p style="margin: 0;">{{ 'To change your avatar visit'|trans }} <a href="https://gravatar.com" target="_blank">Gravatar</a>.</p>
-      </div>
+      <a href="{{ 'api/client/client/resend_email_verification'|link({ 'CSRFToken': CSRFToken }) }}" class="btn btn-primary api-link" data-api-msg="{{ 'Verification email has been resent'|trans }}">{{ 'Resend verification email'|trans }}</a>
     </div>
-  </fieldset>
+  {% endif %}
+
+  <div class="section-layout">
+    <nav class="section-nav" role="navigation" aria-label="Profile navigation">
+      <ul>
+        <li><a href="#details" class="active">{{ 'Details'|trans }}</a></li>
+        <li><a href="#password">{{ 'Password'|trans }}</a></li>
+        <li><a href="#apikey">{{ 'API Key'|trans }}</a></li>
+        <li><a href="#currency">{{ 'Currency'|trans }}</a></li>
+      </ul>
+    </nav>   
+
+    <div class="section-content" role="region">
+      <section id="details" class="card" aria-labelledby="heading-details">
+        <div class="card-header">
+          <h2 class="card-title" id="heading-details">{{ 'Update details'|trans }}</h2>                 
+          <p class="">{{ 'Keep your personal data up to date.'|trans }}</p>
+        </div>
+
+        <div class="card-body">
+          <form method="post" action="client/profile/update" class="api-form" data-api-msg="{{ 'Profile updated'|trans }}">
+            <input type="hidden" name="CSRFToken" value="{{ CSRFToken }}">
+            <fieldset>
+              <legend>Avatar</legend>
+              <div class="form-row" style="align-items: center;">
+                <div class="form-group" style="flex: 0 0 auto;">
+                  <img src="{{ profile.email|gravatar(80) }}" alt="Gravatar" class="img-thumbnail" style="width: 80px; height: 80px; border-radius: 0.5rem;">
+                </div>
+                <div class="form-group" style="margin-left: 1rem;">
+                  <p style="margin: 0;">{{ 'To change your avatar visit'|trans }} <a href="https://gravatar.com" target="_blank">Gravatar</a>.</p>
+                </div>
+              </div>
+            </fieldset>
 
   {% set required = guest.client_required %}
 
@@ -200,9 +191,9 @@
                    </div>
             </section>
 
-            <section id="password" class="card">
+            <section id="password" class="card" aria-labelledby="heading-password">
                 <div class="card-header">    
-                <h2 class="card-title mb-1">{{ 'Change Password'|trans }}</h2>
+                <h2 class="card-title mb-1" id="heading-password">{{ 'Change Password'|trans }}</h2>
                 
                 </div>
                 <div class="card-body">
@@ -235,9 +226,9 @@
                 </div>
             </section>
             
-            <section id="apikey" class="card">
+            <section id="apikey" class="card" aria-labelledby="heading-api">
                 <div class="card-header">
-                <h2 class="card-title">{{ 'API Key'|trans }}</h2>
+                <h2 class="card-title" id="heading-api">{{ 'API Key'|trans }}</h2>
                 
                 </div>
                 <div class="card-body">
@@ -273,10 +264,10 @@
                 </div>
             </section>
 
-            <section id="currency" class="card">
+            <section id="currency" class="card" aria-labelledby="heading-currency">
                 <div class="card-header">
                     
-                <h2 class="card-title">{{ 'Currency'|trans }}</h2>
+                <h2 class="card-title" id="heading-currency">{{ 'Currency'|trans }}</h2>
                 
                 </div>
                 <div class="card-body">
@@ -292,7 +283,7 @@
                 {% endif %}
                 </div>
             </section>
-        </main>
+          </div>
 
 
     </div>

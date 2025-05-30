@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const isLightColor = (hsl) => {
     const parsed = parseHSL(hsl);
-    return parsed ? parsed.l > 60 : true; // Assume light if invalid
+    return parsed ? parsed.l > 60 : true;
   };
 
   const bgDark = getComputedStyle(document.documentElement).getPropertyValue('--bg-dark').trim();
@@ -77,15 +77,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // === Profile nav active highlight on scroll ===
+  // === Unified section nav highlight on scroll ===
   const sections = document.querySelectorAll('section');
-  const navLinks = document.querySelectorAll('.profile-nav a');
-
+  const navLinks = document.querySelectorAll('.section-nav a');
   function activateCurrentLink() {
     let fromTop = window.scrollY + 100;
     sections.forEach(section => {
       const id = section.getAttribute('id');
-      const link = document.querySelector(`.profile-nav a[href="#${id}"]`);
+      const link = document.querySelector(`.section-nav a[href="#${id}"]`);
+      if (!link) return;
       if (section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
         navLinks.forEach(link => link.classList.remove('active'));
         link.classList.add('active');
@@ -93,8 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   window.addEventListener('scroll', activateCurrentLink);
+  activateCurrentLink();
 
-   // === Language selector ===
+  // === Language selector ===
   document.body.addEventListener('click', function (e) {
     const link = e.target.closest('.language_selector');
     if (link) {
@@ -104,4 +105,19 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.reload();
     }
   });
+
+  // === Support ticket form submission ===
+  if (document.body.classList.contains('support-tickets')) {
+    const form = document.getElementById('ticket-submit');
+    if (form) {
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        API.client.post('support/ticket_create',
+          new FormData(form).serializeObject(),
+          (res) => bb.redirect('/client/support/ticket/' + res),
+          (res) => FOSSBilling.message(`${res.message} (${res.code})`, 'error')
+        );
+      });
+    }
+  }
 });
